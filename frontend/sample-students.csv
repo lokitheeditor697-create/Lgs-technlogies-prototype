@@ -1,0 +1,4 @@
+name,email,college,domain,startDate,endDate
+Alice Smith,alice@example.com,Stanford University,Digital Marketing,2024-01-01,2024-02-01
+Bob Jones,bob@example.com,MIT,Python Development,2024-02-01,2024-03-01
+Charlie Brown,charlie@example.com,Harvard,Web Development,2024-03-01,2024-04-01

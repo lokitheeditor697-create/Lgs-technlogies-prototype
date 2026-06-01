@@ -44,7 +44,7 @@ model Registration {
   paymentId     String?
   certificateUrl String?
   offerLetterUrl String?
-  driveLink     String?  @db.Text
+  driveLink     String?
   progress      String   @default("[]")
   startDate     DateTime
   endDate       DateTime

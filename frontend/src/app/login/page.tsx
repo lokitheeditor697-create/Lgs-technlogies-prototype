@@ -13,8 +13,18 @@ export default function Login() {
 
   // Auto-redirect if already logged in
   useEffect(() => {
-    if (localStorage.getItem('user')) {
-      router.push('/dashboard');
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user.role === 'ADMIN') {
+          router.push('/admin');
+        } else {
+          router.push('/dashboard');
+        }
+      } catch (e) {
+        router.push('/dashboard');
+      }
     }
   }, [router]);
 
@@ -44,7 +54,11 @@ export default function Login() {
       localStorage.setItem('user', JSON.stringify(data.user));
       
       // Redirect to dashboard (or home for now)
-      router.push('/');
+      if (data.user.role === 'ADMIN') {
+        router.push('/admin');
+      } else {
+        router.push('/dashboard');
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -183,7 +197,12 @@ export default function Login() {
                       
                       localStorage.setItem('token', data.token);
                       localStorage.setItem('user', JSON.stringify(data.user));
-                      router.push('/');
+                      
+                      if (data.user.role === 'ADMIN') {
+                        router.push('/admin');
+                      } else {
+                        router.push('/dashboard');
+                      }
                     } catch (err: any) {
                       setError(err.message);
                       setLoading(false);

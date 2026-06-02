@@ -69,9 +69,14 @@ export default function Navbar() {
                       <p className="text-base font-bold text-gray-900 truncate">{user.name}</p>
                     </div>
                     <div className="py-2 flex flex-col">
-                      <Link href={user.role === 'ADMIN' ? '/admin' : '/dashboard'} className="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition font-medium">
+                      <Link href="/dashboard" className="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition font-medium">
                         <FiGrid className="w-4 h-4" /> Dashboard
                       </Link>
+                      {user.role === 'ADMIN' && (
+                        <Link href="/admin" className="flex items-center gap-3 px-5 py-2.5 text-sm text-blue-700 bg-blue-50 hover:bg-blue-100 transition font-bold">
+                          <FiSettings className="w-4 h-4" /> Admin Panel
+                        </Link>
+                      )}
                       <Link href="/dashboard" className="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition font-medium">
                         <FiUser className="w-4 h-4" /> My profile
                       </Link>

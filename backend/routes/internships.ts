@@ -120,8 +120,8 @@ router.post('/enroll', authMiddleware, async (req, res) => {
       data: { offerLetterUrl }
     });
 
-    // 2. Send email with Offer Letter attached
-    await sendOfferLetterEmail(studentEmail, studentName, domain, offerLetterUrl);
+    // 2. Send email with Offer Letter attached (in background)
+    sendOfferLetterEmail(studentEmail, studentName, domain, offerLetterUrl).catch(console.error);
 
     res.json({ 
       message: 'Enrolled successfully, offer letter generated', 
@@ -367,8 +367,8 @@ router.post('/generate-certificate/:id', authMiddleware, async (req, res) => {
       });
     }
 
-    // 4. Send Email with Certificate
-    await sendCertificateEmail(registration.user.email, registration.user.name, registration.internship.domain, pdfUrl);
+    // 4. Send Email with Certificate (in background)
+    sendCertificateEmail(registration.user.email, registration.user.name, registration.internship.domain, pdfUrl).catch(console.error);
 
     res.json({ message: "Certificate Generated and Emailed Successfully", certificate });
   } catch (error) {

@@ -15,10 +15,9 @@ const transporter = nodemailer.createTransport({
  */
 export const sendOfferLetterEmail = async (studentEmail: string, studentName: string, domain: string, pdfUrl: string) => {
   try {
-    // pdfUrl is like '/uploads/offer_letters/FILENAME.pdf'
-    // We need to resolve it to the absolute file path on disk to attach it
+    // pdfUrl is like '/offers/Offer_Letter_Name_ID.pdf'
     const fileName = path.basename(pdfUrl);
-    const filePath = path.join(__dirname, '..', 'public', 'uploads', 'offer_letters', fileName);
+    const filePath = path.join(__dirname, '..', 'public', 'offers', fileName);
 
     const mailOptions = {
       from: `"LGS Technologies" <${process.env.EMAIL_USER || 'lgstechnologiess@gmail.com'}>`,
@@ -58,8 +57,9 @@ export const sendOfferLetterEmail = async (studentEmail: string, studentName: st
  */
 export const sendCertificateEmail = async (studentEmail: string, studentName: string, domain: string, pdfUrl: string) => {
   try {
+    // pdfUrl is like '/certificates/certificate_ID.pdf'
     const fileName = path.basename(pdfUrl);
-    const filePath = path.join(__dirname, '..', 'public', 'uploads', 'certificates', fileName);
+    const filePath = path.join(__dirname, '..', 'public', 'certificates', fileName);
 
     const mailOptions = {
       from: `"LGS Technologies" <${process.env.EMAIL_USER || 'lgstechnologiess@gmail.com'}>`,

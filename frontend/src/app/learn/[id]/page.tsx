@@ -262,10 +262,13 @@ export default function LearningPortal() {
     const newProgress = [...progress, currentModule.id];
     setProgress(newProgress);
     
-    // Save to backend
+    const token = localStorage.getItem('token');
     await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/progress/${id}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({ progressStr: JSON.stringify(newProgress) })
     });
 
@@ -283,10 +286,14 @@ export default function LearningPortal() {
     }
 
     try {
+      const token = localStorage.getItem('token');
       // Save to backend (Task endpoint) as a simple string since it's only one task
       const taskRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/task/${id}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ driveLink: taskLink })
       });
 
@@ -300,7 +307,10 @@ export default function LearningPortal() {
       
       await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/progress/${id}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ progressStr: JSON.stringify(newProgress) })
       });
 

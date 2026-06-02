@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
-import jwt from 'jwt-simple'; // Will use jsonwebtoken in real app
+import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
+import crypto from 'crypto';
+import { sendPasswordResetEmail } from '../services/emailService';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -50,9 +52,11 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
 
-    // Since jwt-simple was imported just for typing example, we'll assume jsonwebtoken
-    // const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1d' });
-    const token = 'mock-jwt-token-' + user.id;
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
     res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
   } catch (error) {
@@ -113,3 +117,64 @@ router.put('/profile/:id', async (req, res) => {
 });
 
 export default router;
+
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await prisma.user.findUnique({ where: { email } });
+    
+    if (!user) {
+      // Don't leak if user exists, just return success message
+      return res.json({ message: 'If an account exists, a reset link was sent.' });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { resetToken, resetTokenExpiry }
+    });
+
+    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+    await sendPasswordResetEmail(user.email, resetLink);
+
+    res.json({ message: 'If an account exists, a reset link was sent.' });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    
+    const user = await prisma.user.findFirst({
+      where: {
+        resetToken: token,
+        resetTokenExpiry: { gte: new Date() }
+      }
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid or expired reset token.' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpiry: null
+      }
+    });
+
+    res.json({ message: 'Password has been successfully reset.' });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});

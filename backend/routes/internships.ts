@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { generateOfferLetter } from '../services/pdfService';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
+import { authMiddleware } from '../middleware/auth';
 
 const razorpay = new Razorpay({
   key_id: 'rzp_test_SvsbOeBc2Na56d',
@@ -45,7 +46,7 @@ router.get('/', async (req, res) => {
 });
 
 // Get registrations for a specific user
-router.get('/user/:userId', async (req, res) => {
+router.get('/user/:userId', authMiddleware, async (req, res) => {
   try {
     const { userId } = req.params;
     const registrations = await prisma.registration.findMany({
@@ -61,7 +62,7 @@ router.get('/user/:userId', async (req, res) => {
 });
 
 // Enroll in an internship
-router.post('/enroll', async (req, res) => {
+router.post('/enroll', authMiddleware, async (req, res) => {
   try {
     const { userId, studentName, studentEmail, course, college, domain, duration, startDate, endDate } = req.body;
 
@@ -157,7 +158,7 @@ router.get('/registration/:id', async (req, res) => {
 });
 
 // Update progress
-router.post('/progress/:id', async (req, res) => {
+router.post('/progress/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const { progressStr } = req.body;
@@ -173,7 +174,7 @@ router.post('/progress/:id', async (req, res) => {
 });
 
 // Submit Task (Drive Link)
-router.post('/task/:id', async (req, res) => {
+router.post('/task/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const { driveLink } = req.body;
@@ -192,7 +193,7 @@ router.post('/task/:id', async (req, res) => {
 import { generateCertificate } from '../services/certificateService';
 
 // Razorpay Create Order
-router.post('/create-order/:id', async (req, res) => {
+router.post('/create-order/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const registration = await prisma.registration.findUnique({

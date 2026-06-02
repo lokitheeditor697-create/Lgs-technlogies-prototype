@@ -124,7 +124,7 @@ export default function Login() {
             >
               <div className="flex justify-between mb-2">
                 <label className="block text-sm font-bold text-gray-700">Password</label>
-                <a href="#" className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline transition">Forgot password?</a>
+                <Link href="/forgot-password" className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline transition">Forgot password?</Link>
               </div>
               <div className="relative">
                 <input type="password" name="password" value={formData.password} onChange={handleChange} required placeholder="Enter your password" 

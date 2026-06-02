@@ -1,9 +1,19 @@
-import express from 'express';
+import express, { Response, NextFunction } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { generateCertificate } from '../services/certificateService';
+import { authMiddleware, AuthRequest } from '../middleware/auth';
 
 const prisma = new PrismaClient();
 const router = express.Router();
+
+const adminCheck = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (req.user?.role !== 'ADMIN') {
+    return res.status(403).json({ error: 'Forbidden: Admins only' });
+  }
+  next();
+};
+
+router.use(authMiddleware, adminCheck);
 
 // Get all registrations with user and internship data
 router.get('/registrations', async (req, res) => {

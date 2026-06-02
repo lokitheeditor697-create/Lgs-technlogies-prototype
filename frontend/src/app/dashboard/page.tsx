@@ -83,62 +83,29 @@ export default function StudentDashboard() {
     }
   }, []);
 
-  const handlePayForCertificate = async (registrationId: string) => {
+  const handleGenerateCertificate = async (registrationId: string) => {
+    setIsSaving(true);
     try {
-      // 1. Create Order
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/create-order/${registrationId}`, { method: 'POST' });
-      const order = await res.json();
-      
-      if (!res.ok) throw new Error(order.error || 'Failed to create order');
-
-      // 2. Open Razorpay Checkout
-      const options = {
-        key: 'rzp_test_SvsbOeBc2Na56d',
-        amount: order.amount,
-        currency: order.currency,
-        name: 'LGS Technologies',
-        description: 'Certificate Fee',
-        order_id: order.id,
-        handler: async function (response: any) {
-          // 3. Verify Payment
-          try {
-            const verifyRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/verify-payment/${registrationId}`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature
-              })
-            });
-            
-            if (verifyRes.ok) {
-              alert('Payment successful! Your certificate is being generated and sent to your email.');
-              fetchRegistrations(user.id);
-            } else {
-              const errorData = await verifyRes.json();
-              alert(errorData.error || 'Payment verification failed.');
-            }
-          } catch (verifyErr) {
-            alert('Error verifying payment.');
-          }
-        },
-        prefill: {
-          name: user.name,
-          email: user.email,
-          contact: user.phone
-        },
-        theme: {
-          color: '#2563EB'
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/generate-certificate/${registrationId}`, { 
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
-      };
+      });
+      const data = await res.json();
       
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
-      
+      if (res.ok) {
+        alert('Certificate generated successfully! It has also been sent to your email.');
+        fetchRegistrations(user.id);
+      } else {
+        alert(data.error || 'Failed to generate certificate.');
+      }
     } catch (err: any) {
       console.error(err);
-      alert('Failed to initiate payment.');
+      alert('Failed to generate certificate.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -319,8 +286,8 @@ export default function StudentDashboard() {
                                   <div className="bg-green-500 h-1.5 rounded-full w-full"></div>
                                 </div>
                                 {reg.paymentStatus !== 'PAID' ? (
-                                  <button onClick={() => handlePayForCertificate(reg.id)} className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition text-sm flex justify-center items-center gap-2">
-                                    <FiCreditCard /> Pay for Certificate
+                                  <button onClick={() => handleGenerateCertificate(reg.id)} disabled={isSaving} className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition text-sm flex justify-center items-center gap-2 disabled:bg-blue-400">
+                                    <FiCheckCircle /> Generate Certificate
                                   </button>
                                 ) : (
                                   <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${reg.certificate?.pdfUrl || '#'}`} target="_blank" rel="noreferrer" className="w-full py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition text-sm flex justify-center items-center gap-2">
@@ -339,9 +306,16 @@ export default function StudentDashboard() {
                                     <div className="absolute top-0 right-0 bottom-0 left-0 bg-white/20 animate-pulse"></div>
                                   </div>
                                 </div>
-                                <Link href={`/learn/${reg.id}`} className="block w-full py-2.5 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-center rounded-lg font-bold transition text-sm">
-                                  Continue Learning
-                                </Link>
+                                <div className="flex flex-col gap-2">
+                                  <Link href={`/learn/${reg.id}`} className="block w-full py-2.5 bg-blue-600 text-white hover:bg-blue-700 text-center rounded-lg font-bold transition text-sm shadow-sm">
+                                    Continue Learning
+                                  </Link>
+                                  {reg.offerLetterUrl && (
+                                    <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${reg.offerLetterUrl}`} target="_blank" rel="noreferrer" className="block w-full py-2.5 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-center rounded-lg font-bold transition text-sm">
+                                      Download Offer Letter
+                                    </a>
+                                  )}
+                                </div>
                               </div>
                             )}
                           </div>

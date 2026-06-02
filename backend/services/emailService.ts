@@ -1,91 +1,95 @@
 import nodemailer from 'nodemailer';
+import path from 'path';
 
-export async function sendOfferLetterEmail(toEmail: string, studentName: string, pdfPath: string) {
-  let transporter;
-
-  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-    transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-  } else {
-    const testAccount = await nodemailer.createTestAccount();
-    transporter = nodemailer.createTransport({
-      host: "smtp.ethereal.email",
-      port: 587,
-      secure: false, 
-      auth: {
-        user: testAccount.user,
-        pass: testAccount.pass,
-      },
-    });
+// Create a transporter using Gmail SMTP
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER || 'lgstechnologiess@gmail.com',
+    pass: process.env.EMAIL_PASS || 'chvp ylpo vegq eajw'
   }
+});
 
-  const mailOptions = {
-    from: '"LGS Technologies" <noreply@lgstechnologies.in>',
-    to: toEmail,
-    subject: 'Your Internship Offer Letter - LGS Technologies',
-    text: `Dear ${studentName},\n\nCongratulations! We are pleased to offer you an internship at LGS Technologies. Please find your offer letter attached.\n\nBest Regards,\nLGS Technologies Team`,
-    attachments: [
-      {
-        filename: 'Offer_Letter.pdf',
-        path: pdfPath
-      }
-    ]
-  };
+/**
+ * Sends an email with the Offer Letter attached
+ */
+export const sendOfferLetterEmail = async (studentEmail: string, studentName: string, domain: string, pdfUrl: string) => {
+  try {
+    // pdfUrl is like '/uploads/offer_letters/FILENAME.pdf'
+    // We need to resolve it to the absolute file path on disk to attach it
+    const fileName = path.basename(pdfUrl);
+    const filePath = path.join(__dirname, '..', 'public', 'uploads', 'offer_letters', fileName);
 
-  const info = await transporter.sendMail(mailOptions);
-  console.log('Email sent: %s', info.messageId);
-  
-  if (!process.env.SMTP_USER) {
-    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-    return nodemailer.getTestMessageUrl(info);
+    const mailOptions = {
+      from: `"LGS Technologies" <${process.env.EMAIL_USER || 'lgstechnologiess@gmail.com'}>`,
+      to: studentEmail,
+      subject: `Your Offer Letter from LGS Technologies - ${domain} Internship`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+          <h2 style="color: #2563EB;">Welcome to LGS Technologies!</h2>
+          <p>Dear <strong>${studentName}</strong>,</p>
+          <p>Congratulations! We are thrilled to offer you the internship position for <strong>${domain}</strong>.</p>
+          <p>Please find your official Offer Letter attached to this email.</p>
+          <p>We are excited to have you on board and look forward to seeing your growth during this internship!</p>
+          <br/>
+          <p>Best Regards,</p>
+          <p><strong>LGS Technologies Team</strong></p>
+        </div>
+      `,
+      attachments: [
+        {
+          filename: `Offer_Letter_${studentName.replace(/\s+/g, '_')}.pdf`,
+          path: filePath
+        }
+      ]
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Offer Letter email sent successfully:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('Failed to send Offer Letter email:', error);
+    return false; // We return false instead of throwing so it doesn't crash the main API response
   }
-  
-  return null;
-}
+};
 
-export async function sendPasswordResetEmail(toEmail: string, resetLink: string) {
-  let transporter;
+/**
+ * Sends an email with the Certificate attached
+ */
+export const sendCertificateEmail = async (studentEmail: string, studentName: string, domain: string, pdfUrl: string) => {
+  try {
+    const fileName = path.basename(pdfUrl);
+    const filePath = path.join(__dirname, '..', 'public', 'uploads', 'certificates', fileName);
 
-  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-    transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-  } else {
-    const testAccount = await nodemailer.createTestAccount();
-    transporter = nodemailer.createTransport({
-      host: "smtp.ethereal.email",
-      port: 587,
-      secure: false, 
-      auth: {
-        user: testAccount.user,
-        pass: testAccount.pass,
-      },
-    });
+    const mailOptions = {
+      from: `"LGS Technologies" <${process.env.EMAIL_USER || 'lgstechnologiess@gmail.com'}>`,
+      to: studentEmail,
+      subject: `Congratulations! Your Certificate from LGS Technologies`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+          <h2 style="color: #16A34A;">Congratulations on Completing Your Internship!</h2>
+          <p>Dear <strong>${studentName}</strong>,</p>
+          <p>You have successfully completed your <strong>${domain}</strong> internship at LGS Technologies!</p>
+          <p>We are incredibly proud of your hard work and dedication. Please find your official Completion Certificate attached to this email.</p>
+          <p>We wish you the best of luck in your future endeavors!</p>
+          <br/>
+          <p>Best Regards,</p>
+          <p><strong>LGS Technologies Team</strong></p>
+        </div>
+      `,
+      attachments: [
+        {
+          filename: `Certificate_${studentName.replace(/\s+/g, '_')}.pdf`,
+          path: filePath
+        }
+      ]
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Certificate email sent successfully:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('Failed to send Certificate email:', error);
+    return false;
   }
-
-  const mailOptions = {
-    from: '"LGS Technologies" <noreply@lgstechnologies.in>',
-    to: toEmail,
-    subject: 'Password Reset Request - LGS Technologies',
-    text: `You have requested to reset your password.\n\nPlease click on the following link, or paste it into your browser to complete the process:\n\n${resetLink}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n\nBest Regards,\nLGS Technologies Team`,
-  };
-
-  const info = await transporter.sendMail(mailOptions);
-  console.log('Password reset email sent: %s', info.messageId);
-  
-  if (!process.env.SMTP_USER) {
-    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-    return nodemailer.getTestMessageUrl(info);
-  }
-  
-  return null;
-}
+};

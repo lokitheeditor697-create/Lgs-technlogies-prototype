@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { generateOfferLetter } from '../services/pdfService';
+import { sendOfferLetterEmail, sendCertificateEmail } from '../services/emailService';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import { authMiddleware } from '../middleware/auth';
@@ -118,6 +119,9 @@ router.post('/enroll', authMiddleware, async (req, res) => {
       where: { id: registration.id },
       data: { offerLetterUrl }
     });
+
+    // 2. Send email with Offer Letter attached
+    await sendOfferLetterEmail(studentEmail, studentName, domain, offerLetterUrl);
 
     res.json({ 
       message: 'Enrolled successfully, offer letter generated', 
@@ -314,6 +318,62 @@ router.get('/verify-certificate/:certificateId', async (req, res) => {
   } catch (error) {
     console.error('Verify error:', error);
     res.status(500).json({ error: 'Verification failed' });
+  }
+});
+
+// Bypass Payment & Generate Certificate directly (As per request)
+router.post('/generate-certificate/:id', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // 1. Mark as PAID (bypassing Razorpay)
+    const registration = await prisma.registration.update({
+      where: { id },
+      data: { paymentStatus: 'PAID', paymentId: 'BYPASSED_' + Date.now() },
+      include: { user: true, internship: true }
+    });
+
+    // 2. Find or Generate Certificate
+    let certificate = await prisma.certificate.findUnique({
+      where: { registrationId: registration.id }
+    });
+    
+    const certificateId = certificate ? certificate.certificateId : `LGS-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+    
+    const pdfUrl = await generateCertificate(
+      registration.user.name,
+      'Engineering',
+      registration.user.college || 'College',
+      registration.internship.domain,
+      registration.startDate.toISOString(),
+      registration.endDate.toISOString(),
+      certificateId
+    );
+
+    // 3. Save Certificate in DB
+    if (certificate) {
+      certificate = await prisma.certificate.update({
+        where: { id: certificate.id },
+        data: { pdfUrl, status: "ISSUED" }
+      });
+    } else {
+      certificate = await prisma.certificate.create({
+        data: {
+          certificateId,
+          registrationId: registration.id,
+          pdfUrl,
+          status: "ISSUED"
+        }
+      });
+    }
+
+    // 4. Send Email with Certificate
+    await sendCertificateEmail(registration.user.email, registration.user.name, registration.internship.domain, pdfUrl);
+
+    res.json({ message: "Certificate Generated and Emailed Successfully", certificate });
+  } catch (error) {
+    console.error('Certificate generation error:', error);
+    res.status(500).json({ error: 'Certificate generation failed' });
   }
 });
 

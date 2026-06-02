@@ -133,7 +133,7 @@ export default function ApplyInternship() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/enroll`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/internships/enroll`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -198,7 +198,7 @@ export default function ApplyInternship() {
               <motion.a 
                 whileHover={{ scale: 1.02, translateY: -2 }}
                 whileTap={{ scale: 0.98 }}
-                href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${offerLetterUrl}`} 
+                href={`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}${offerLetterUrl}`} 
                 target="_blank" 
                 rel="noreferrer" 
                 className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-4 px-8 rounded-xl shadow-[0_8px_20px_rgba(34,197,94,0.3)] hover:shadow-[0_8px_25px_rgba(34,197,94,0.4)] transition-all inline-block"

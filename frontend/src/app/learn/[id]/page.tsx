@@ -212,7 +212,7 @@ export default function LearningPortal() {
 
   const fetchRegistration = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/registration/${id}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/internships/registration/${id}`);
       const data = await res.json();
       setRegistration(data);
       
@@ -263,7 +263,7 @@ export default function LearningPortal() {
     setProgress(newProgress);
     
     const token = localStorage.getItem('token');
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/progress/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/internships/progress/${id}`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -288,7 +288,7 @@ export default function LearningPortal() {
     try {
       const token = localStorage.getItem('token');
       // Save to backend (Task endpoint) as a simple string since it's only one task
-      const taskRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/task/${id}`, {
+      const taskRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/internships/task/${id}`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -305,7 +305,7 @@ export default function LearningPortal() {
       const newProgress = [...progress, currentModule.id];
       setProgress(newProgress);
       
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/progress/${id}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/internships/progress/${id}`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -317,7 +317,7 @@ export default function LearningPortal() {
       setTaskLink('');
 
       // Complete Internship
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/mock-complete/${id}`, { method: 'POST' });
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/internships/mock-complete/${id}`, { method: 'POST' });
       alert("🎉 Congratulations! You have completed all modules and submitted your final project! You can now claim your certificate.");
       router.push('/dashboard');
       

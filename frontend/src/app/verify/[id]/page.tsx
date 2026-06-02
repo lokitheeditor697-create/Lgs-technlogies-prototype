@@ -13,7 +13,7 @@ export default function VerifyCertificate() {
   useEffect(() => {
     const verifyCert = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/verify-certificate/${id}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/internships/verify-certificate/${id}`);
         const result = await res.json();
         
         if (res.ok && result.valid) {
@@ -79,7 +79,7 @@ export default function VerifyCertificate() {
 
                 <div className="mt-10 pt-8">
                   <a 
-                    href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${data.pdfUrl}`} 
+                    href={`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}${data.pdfUrl}`} 
                     target="_blank" 
                     rel="noreferrer"
                     className="w-full flex justify-center items-center gap-2 bg-gray-900 text-white font-medium px-6 py-4 rounded-xl hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"

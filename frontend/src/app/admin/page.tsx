@@ -27,7 +27,7 @@ export default function AdminDashboard() {
   const fetchRegistrations = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/registrations`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/admin/registrations`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -53,7 +53,7 @@ export default function AdminDashboard() {
     
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/registrations/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/admin/registrations/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
       setLoading(true);
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/bulk-certificates`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/admin/bulk-certificates`, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ export default function AdminDashboard() {
                 if (!window.confirm("Are you sure you want to resend all missing offer letters? This will email everyone who hasn't received one.")) return;
                 try {
                   alert('Sending missing offer letters... This might take a minute depending on the number of users.');
-                  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/resend-all-offers`);
+                  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/internships/resend-all-offers`);
                   const data = await res.json();
                   alert(data.message || 'Emails sent successfully!');
                 } catch (e) {
@@ -245,7 +245,7 @@ export default function AdminDashboard() {
                                 if(!confirm("Are you sure you want to approve this task and generate the certificate?")) return;
                                 try {
                                   const token = localStorage.getItem('token');
-                                  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/approve-task/${reg.id}`, { 
+                                  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/admin/approve-task/${reg.id}`, { 
                                     method: 'POST',
                                     headers: {
                                       'Authorization': `Bearer ${token}`
@@ -265,13 +265,13 @@ export default function AdminDashboard() {
                         )}
                         
                         {reg.offerLetterUrl && (
-                          <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${reg.offerLetterUrl}`} target="_blank" rel="noreferrer" className="text-indigo-600 hover:text-indigo-900 text-sm font-medium bg-indigo-50 px-2 py-1 rounded">
+                          <a href={`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}${reg.offerLetterUrl}`} target="_blank" rel="noreferrer" className="text-indigo-600 hover:text-indigo-900 text-sm font-medium bg-indigo-50 px-2 py-1 rounded">
                             View Offer
                           </a>
                         )}
 
                         {reg.certificate?.pdfUrl && (
-                          <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${reg.certificate.pdfUrl}`} target="_blank" rel="noreferrer" className="text-purple-600 hover:text-purple-900 text-sm font-medium bg-purple-50 px-2 py-1 rounded">
+                          <a href={`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}${reg.certificate.pdfUrl}`} target="_blank" rel="noreferrer" className="text-purple-600 hover:text-purple-900 text-sm font-medium bg-purple-50 px-2 py-1 rounded">
                             View Cert
                           </a>
                         )}

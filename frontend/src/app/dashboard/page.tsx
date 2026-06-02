@@ -48,7 +48,7 @@ export default function StudentDashboard() {
   const fetchRegistrations = async (userId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/user/${userId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/internships/user/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -87,7 +87,7 @@ export default function StudentDashboard() {
     setIsSaving(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/generate-certificate/${registrationId}`, { 
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/internships/generate-certificate/${registrationId}`, { 
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -127,7 +127,7 @@ export default function StudentDashboard() {
     }
     
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/profile/${user.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/auth/profile/${user.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -304,7 +304,7 @@ export default function StudentDashboard() {
                                     <FiCheckCircle /> Generate Certificate
                                   </button>
                                 ) : (
-                                  <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${reg.certificate?.pdfUrl || '#'}`} target="_blank" rel="noreferrer" className="w-full py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition text-sm flex justify-center items-center gap-2">
+                                  <a href={`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}${reg.certificate?.pdfUrl || '#'}`} target="_blank" rel="noreferrer" className="w-full py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition text-sm flex justify-center items-center gap-2">
                                     <FiCheckCircle /> Download Certificate
                                   </a>
                                 )}
@@ -325,7 +325,7 @@ export default function StudentDashboard() {
                                     Continue Learning
                                   </Link>
                                   {reg.offerLetterUrl && (
-                                    <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${reg.offerLetterUrl}`} target="_blank" rel="noreferrer" className="block w-full py-2.5 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-center rounded-lg font-bold transition text-sm">
+                                    <a href={`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}${reg.offerLetterUrl}`} target="_blank" rel="noreferrer" className="block w-full py-2.5 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-center rounded-lg font-bold transition text-sm">
                                       Download Offer Letter
                                     </a>
                                   )}

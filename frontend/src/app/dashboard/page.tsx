@@ -186,21 +186,6 @@ export default function StudentDashboard() {
               <p className="text-blue-100 font-medium text-lg">You are on track. Keep up the great work.</p>
             </div>
             <div className="relative z-10 flex gap-4">
-              <button
-                onClick={async () => {
-                  try {
-                    alert('Sending emails... Please wait a few seconds.');
-                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/resend-all-offers`);
-                    const data = await res.json();
-                    alert(data.message || 'Check your inbox!');
-                  } catch (e) {
-                    alert('Failed to send emails');
-                  }
-                }}
-                className="bg-green-500 hover:bg-green-400 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all"
-              >
-                Send All Missing Emails
-              </button>
               <button 
                 onClick={() => {
                   localStorage.removeItem('user');

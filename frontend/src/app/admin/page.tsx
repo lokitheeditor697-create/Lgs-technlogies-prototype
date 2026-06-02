@@ -131,12 +131,28 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 flex items-center justify-between">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-bold text-gray-900 mb-1">Bulk Generate Certificates</h2>
-            <p className="text-sm text-gray-500 max-w-lg">Upload a CSV file with columns: <code className="bg-gray-100 px-1 rounded">name, email, college, domain, startDate, endDate</code> to instantly generate PDF certificates and accounts for hundreds of students.</p>
+            <h2 className="text-lg font-bold text-gray-900 mb-1">Bulk Actions & Certificates</h2>
+            <p className="text-sm text-gray-500 max-w-lg">Upload a CSV file with columns: <code className="bg-gray-100 px-1 rounded">name, email, college, domain, startDate, endDate</code> to instantly generate PDF certificates.</p>
           </div>
-          <div>
+          <div className="flex gap-4">
+            <button
+              onClick={async () => {
+                if (!window.confirm("Are you sure you want to resend all missing offer letters? This will email everyone who hasn't received one.")) return;
+                try {
+                  alert('Sending missing offer letters... This might take a minute depending on the number of users.');
+                  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/resend-all-offers`);
+                  const data = await res.json();
+                  alert(data.message || 'Emails sent successfully!');
+                } catch (e) {
+                  alert('Failed to send emails. Check the server logs.');
+                }
+              }}
+              className="bg-green-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-600/20"
+            >
+              Resend All Missing Offers
+            </button>
             <label className="cursor-pointer bg-blue-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-600/20 inline-block">
               Upload CSV
               <input type="file" accept=".csv" className="hidden" onChange={handleFileUpload} />

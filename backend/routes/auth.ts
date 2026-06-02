@@ -55,6 +55,15 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
 
+    // Auto-upgrade the main account to ADMIN
+    if (user.email === 'lgstechnologiess@gmail.com' && user.role !== 'ADMIN') {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { role: 'ADMIN' }
+      });
+      user.role = 'ADMIN';
+    }
+
     const token = jwt.sign(
       { id: user.id, role: user.role },
       JWT_SECRET,
@@ -213,6 +222,15 @@ router.post('/google', async (req, res) => {
           password: hashedPassword,
         }
       });
+    }
+
+    // Auto-upgrade the main account to ADMIN
+    if (user.email === 'lgstechnologiess@gmail.com' && user.role !== 'ADMIN') {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { role: 'ADMIN' }
+      });
+      user.role = 'ADMIN';
     }
     
     // Generate our app's JWT

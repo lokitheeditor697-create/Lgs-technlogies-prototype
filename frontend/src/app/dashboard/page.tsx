@@ -190,7 +190,7 @@ export default function StudentDashboard() {
                 onClick={() => {
                   localStorage.removeItem('user');
                   localStorage.removeItem('token');
-                  router.push('/login');
+                  window.location.href = '/login';
                 }}
                 className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 font-bold py-3 px-8 rounded-xl transition-all shadow-[0_4px_15px_rgba(0,0,0,0.1)] flex items-center gap-2"
               >

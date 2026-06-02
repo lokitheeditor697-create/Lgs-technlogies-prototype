@@ -33,7 +33,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl glass-panel z-50 rounded-full shadow-apple transition-all duration-300">
+    <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl bg-white border border-gray-200 z-50 rounded-full shadow-lg transition-all duration-300">
       <div className="px-6 sm:px-8">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center gap-2 group">

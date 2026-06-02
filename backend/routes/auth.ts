@@ -224,8 +224,8 @@ router.post('/google', async (req, res) => {
     
     res.json({ token: jwtToken, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('Google Auth Error:', error);
-    res.status(500).json({ error: 'Failed to authenticate with Google' });
+    res.status(500).json({ error: 'Failed to authenticate with Google', details: error.message, stack: error.stack });
   }
 });

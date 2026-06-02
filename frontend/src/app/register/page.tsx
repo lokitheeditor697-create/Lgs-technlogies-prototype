@@ -213,7 +213,7 @@ export default function Register() {
                         body: JSON.stringify({ token: credentialResponse.credential })
                       });
                       const data = await res.json();
-                      if (!res.ok) throw new Error(data.error || 'Google login failed');
+                      if (!res.ok) throw new Error(data.details || data.error || 'Google login failed');
                       
                       localStorage.setItem('token', data.token);
                       localStorage.setItem('user', JSON.stringify(data.user));

@@ -408,14 +408,18 @@ router.get('/resend-all-offers', async (req, res) => {
       });
 
       // Send Email (using await so it doesn't overwhelm the SMTP server and crash Render)
-      await sendOfferLetterEmail(reg.user.email, reg.user.name, reg.internship.domain, offerLetterUrl);
-      sentCount++;
+      const emailSuccess = await sendOfferLetterEmail(reg.user.email, reg.user.name, reg.internship.domain, offerLetterUrl);
+      if (emailSuccess) {
+        sentCount++;
+      } else {
+        console.error(`Failed to email ${reg.user.email}`);
+      }
     }
 
-    res.json({ message: `Successfully regenerated and emailed ${sentCount} offer letters!` });
-  } catch (error) {
+    res.json({ message: `Successfully regenerated and emailed ${sentCount} offer letters!`, attempted: registrations.length });
+  } catch (error: any) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to resend offers' });
+    res.status(500).json({ error: 'Failed to resend offers', details: error.message });
   }
 });
 

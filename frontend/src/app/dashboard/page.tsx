@@ -49,7 +49,11 @@ export default function StudentDashboard() {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/user/${userId}`);
       const data = await res.json();
-      setRegistrations(data);
+      if (Array.isArray(data)) {
+        setRegistrations(data);
+      } else {
+        console.error('API Error:', data.error);
+      }
     } catch (err) {
       console.error('Failed to fetch registrations', err);
     } finally {

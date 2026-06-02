@@ -104,46 +104,6 @@ export default function Login() {
             </motion.div>
           )}
 
-          <div className="mb-6">
-            <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '669166573273-e0bn8vop2f9bclrreffpb1p9ap2e014c.apps.googleusercontent.com'}>
-              <div className="flex justify-center">
-                <GoogleLogin
-                  onSuccess={async (credentialResponse) => {
-                    setLoading(true);
-                    setError('');
-                    try {
-                      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/google`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ token: credentialResponse.credential })
-                      });
-                      const data = await res.json();
-                      if (!res.ok) throw new Error(data.error || 'Google login failed');
-                      
-                      localStorage.setItem('token', data.token);
-                      localStorage.setItem('user', JSON.stringify(data.user));
-                      router.push('/');
-                    } catch (err: any) {
-                      setError(err.message);
-                      setLoading(false);
-                    }
-                  }}
-                  onError={() => {
-                    setError('Google Login Failed');
-                  }}
-                />
-              </div>
-            </GoogleOAuthProvider>
-            
-            <div className="relative mt-8 mb-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200"></div>
-              </div>
-              <div className="relative flex justify-center text-sm font-medium">
-                <span className="px-4 bg-white text-gray-500 rounded-full border border-gray-100">Or continue with email</span>
-              </div>
-            </div>
-          </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <motion.div
@@ -189,6 +149,47 @@ export default function Login() {
               {!loading && <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>}
             </motion.button>
           </form>
+
+          <div className="mb-2 mt-8">
+            <div className="relative mb-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200"></div>
+              </div>
+              <div className="relative flex justify-center text-sm font-medium">
+                <span className="px-4 bg-white text-gray-500 rounded-full border border-gray-100">Or continue with Google</span>
+              </div>
+            </div>
+            
+            <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '669166573273-e0bn8vop2f9bclrreffpb1p9ap2e014c.apps.googleusercontent.com'}>
+              <div className="flex justify-center">
+                <GoogleLogin
+                  onSuccess={async (credentialResponse) => {
+                    setLoading(true);
+                    setError('');
+                    try {
+                      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/google`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token: credentialResponse.credential })
+                      });
+                      const data = await res.json();
+                      if (!res.ok) throw new Error(data.error || 'Google login failed');
+                      
+                      localStorage.setItem('token', data.token);
+                      localStorage.setItem('user', JSON.stringify(data.user));
+                      router.push('/');
+                    } catch (err: any) {
+                      setError(err.message);
+                      setLoading(false);
+                    }
+                  }}
+                  onError={() => {
+                    setError('Google Login Failed');
+                  }}
+                />
+              </div>
+            </GoogleOAuthProvider>
+          </div>
 
           <motion.div 
             initial={{ opacity: 0 }}

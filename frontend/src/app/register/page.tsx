@@ -34,11 +34,31 @@ export default function Register() {
     setLoading(true);
     setError('');
     
+    // Form Validation
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(formData.phone)) {
+      setError('Phone number must be exactly 10 digits');
+      setLoading(false);
+      return;
+    }
+    
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setLoading(false);
+      return;
+    }
+    
+    if (formData.department.trim() === '') {
+      setError('Please specify your department');
+      setLoading(false);
+      return;
+    }
+    
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ ...formData, department: formData.department.trim() })
       });
       const data = await res.json();
       
@@ -140,16 +160,42 @@ export default function Register() {
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }} className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className={labelClasses}>Department</label>
-                <input required type="text" name="department" list="dept-list" value={formData.department} onChange={handleChange} placeholder="Select or type" className={inputClasses} />
-                <datalist id="dept-list">
-                  <option value="Computer Science" />
-                  <option value="Information Technology (IT)" />
-                  <option value="Electronics and Communication" />
-                  <option value="Mechanical Engineering" />
-                  <option value="Civil Engineering" />
-                  <option value="Data Science" />
-                  <option value="Artificial Intelligence" />
-                </datalist>
+                <select 
+                  name="department" 
+                  value={['Computer Science', 'Information Technology (IT)', 'Electronics and Communication', 'Mechanical Engineering', 'Civil Engineering', 'Data Science', 'Artificial Intelligence', ''].includes(formData.department) ? formData.department : 'Other'} 
+                  onChange={(e) => {
+                    if (e.target.value !== 'Other') {
+                      setFormData({ ...formData, department: e.target.value });
+                    } else {
+                      setFormData({ ...formData, department: ' ' }); // Trigger custom input
+                    }
+                  }} 
+                  required 
+                  className={`${inputClasses} ${!formData.department ? 'text-gray-400' : ''} mb-3`}
+                >
+                  <option value="" disabled>Select department</option>
+                  <option value="Computer Science">Computer Science</option>
+                  <option value="Information Technology (IT)">Information Technology (IT)</option>
+                  <option value="Electronics and Communication">Electronics and Communication</option>
+                  <option value="Mechanical Engineering">Mechanical Engineering</option>
+                  <option value="Civil Engineering">Civil Engineering</option>
+                  <option value="Data Science">Data Science</option>
+                  <option value="Artificial Intelligence">Artificial Intelligence</option>
+                  <option value="Other">Other (Please specify)</option>
+                </select>
+                
+                {!['Computer Science', 'Information Technology (IT)', 'Electronics and Communication', 'Mechanical Engineering', 'Civil Engineering', 'Data Science', 'Artificial Intelligence', ''].includes(formData.department) && (
+                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
+                    <input 
+                      type="text" 
+                      value={formData.department === ' ' ? '' : formData.department} 
+                      onChange={(e) => setFormData({ ...formData, department: e.target.value })} 
+                      required 
+                      placeholder="Type your department" 
+                      className={inputClasses} 
+                    />
+                  </motion.div>
+                )}
               </div>
               <div>
                 <label className={labelClasses}>Year</label>

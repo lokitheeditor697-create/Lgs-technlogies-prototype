@@ -65,6 +65,8 @@ export default function ApplyInternship() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [duration, setDuration] = useState(getDurationValue(initialDuration));
+  const [department, setDepartment] = useState(user?.department || '');
+  const [customDepartment, setCustomDepartment] = useState('');
 
   // Automatically calculate end date when start date or duration changes
   useEffect(() => {
@@ -93,7 +95,9 @@ export default function ApplyInternship() {
       alert("Please login or sign up first to apply for an internship.");
       router.push('/login');
     } else {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      setDepartment(parsedUser.department || '');
     }
   }, [router]);
 
@@ -108,13 +112,30 @@ export default function ApplyInternship() {
     
     // Create payload
     const form = e.target as HTMLFormElement;
+    const phone = (form.elements.namedItem('phone') as HTMLInputElement).value;
+    
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(phone)) {
+      alert('Phone number must be exactly 10 digits');
+      setIsLoading(false);
+      return;
+    }
+    
+    const finalDepartment = department === 'Other' ? customDepartment : department;
+    
+    if (finalDepartment.trim() === '') {
+      alert('Please specify your department');
+      setIsLoading(false);
+      return;
+    }
+
     const payload = {
       userId: user.id,
       studentName: (form.elements.namedItem('name') as HTMLInputElement).value,
       studentEmail: (form.elements.namedItem('email') as HTMLInputElement).value,
-      phone: (form.elements.namedItem('phone') as HTMLInputElement).value,
+      phone: phone,
       college: (form.elements.namedItem('college') as HTMLInputElement).value,
-      department: (form.elements.namedItem('department') as HTMLSelectElement).value,
+      department: finalDepartment.trim(),
       year: (form.elements.namedItem('year') as HTMLSelectElement).value,
       duration: (form.elements.namedItem('duration') as HTMLSelectElement).value,
       domain: displayDomain,
@@ -258,20 +279,30 @@ export default function ApplyInternship() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }}>
               <label className={labelClasses}>Department / Course</label>
-              <input 
+              <select 
                 required 
-                type="text" 
-                name="department" 
-                list="department-list"
-                defaultValue={user?.department || ''} 
-                placeholder="Select or type your department"
-                className={`${inputClasses} bg-white/60`}
-              />
-              <datalist id="department-list">
+                value={departments.includes(department) ? department : (department ? 'Other' : '')}
+                onChange={(e) => setDepartment(e.target.value)}
+                className={`${inputClasses} bg-white/60 mb-3 appearance-none`}
+              >
+                <option value="" disabled>Select your department</option>
                 {departments.map((dept, idx) => (
-                  <option key={idx} value={dept} />
+                  <option key={idx} value={dept}>{dept}</option>
                 ))}
-              </datalist>
+              </select>
+              
+              {!departments.includes(department) && department !== '' && (
+                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
+                  <input 
+                    type="text" 
+                    value={customDepartment}
+                    onChange={(e) => setCustomDepartment(e.target.value)}
+                    required 
+                    placeholder="Type your department" 
+                    className={`${inputClasses} bg-white/60`} 
+                  />
+                </motion.div>
+              )}
             </motion.div>
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.45 }}>
               <label className={labelClasses}>Year of Study</label>

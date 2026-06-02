@@ -180,9 +180,38 @@ export default function StudentDashboard() {
           <div className="w-24 h-24 rounded-full bg-blue-500 text-white flex items-center justify-center text-4xl font-bold shadow-lg">
             {user.name.substring(0, 2).toUpperCase()}
           </div>
-          <div>
-            <p className="text-gray-500 text-lg">Hello,</p>
-            <h1 className="text-3xl font-bold text-gray-900">{user.name}</h1>
+          <div className="mt-12 mb-8 bg-blue-600 rounded-3xl p-8 sm:p-12 text-white shadow-[0_10px_40px_rgba(37,99,235,0.2)] relative overflow-hidden flex flex-col md:flex-row items-center justify-between z-10 w-full">
+            <div className="relative z-10 text-center md:text-left mb-6 md:mb-0">
+              <h2 className="text-3xl font-extrabold mb-2 text-white drop-shadow-md tracking-tight">Welcome back, {user.name.split(' ')[0]}!</h2>
+              <p className="text-blue-100 font-medium text-lg">You are on track. Keep up the great work.</p>
+            </div>
+            <div className="relative z-10 flex gap-4">
+              <button
+                onClick={async () => {
+                  try {
+                    alert('Sending emails... Please wait a few seconds.');
+                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/internships/resend-all-offers`);
+                    const data = await res.json();
+                    alert(data.message || 'Check your inbox!');
+                  } catch (e) {
+                    alert('Failed to send emails');
+                  }
+                }}
+                className="bg-green-500 hover:bg-green-400 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all"
+              >
+                Send All Missing Emails
+              </button>
+              <button 
+                onClick={() => {
+                  localStorage.removeItem('user');
+                  localStorage.removeItem('token');
+                  router.push('/login');
+                }}
+                className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 font-bold py-3 px-8 rounded-xl transition-all shadow-[0_4px_15px_rgba(0,0,0,0.1)] flex items-center gap-2"
+              >
+                Log Out
+              </button>
+            </div>
           </div>
         </div>
 

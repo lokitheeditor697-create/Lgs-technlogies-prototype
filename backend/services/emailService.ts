@@ -13,12 +13,8 @@ const transporter = nodemailer.createTransport({
 /**
  * Sends an email with the Offer Letter attached
  */
-export const sendOfferLetterEmail = async (studentEmail: string, studentName: string, domain: string, pdfUrl: string) => {
+export const sendOfferLetterEmail = async (studentEmail: string, studentName: string, domain: string, pdfBuffer: Uint8Array, fileName: string) => {
   try {
-    // pdfUrl is like '/offers/Offer_Letter_Name_ID.pdf'
-    const fileName = path.basename(pdfUrl);
-    const filePath = path.join(__dirname, '..', 'public', 'offers', fileName);
-
     const mailOptions = {
       from: `"LGS Technologies" <${process.env.EMAIL_USER || 'lgstechnologiess@gmail.com'}>`,
       to: studentEmail,
@@ -37,8 +33,8 @@ export const sendOfferLetterEmail = async (studentEmail: string, studentName: st
       `,
       attachments: [
         {
-          filename: `Offer_Letter_${studentName.replace(/\s+/g, '_')}.pdf`,
-          path: filePath
+          filename: fileName,
+          content: Buffer.from(pdfBuffer)
         }
       ]
     };

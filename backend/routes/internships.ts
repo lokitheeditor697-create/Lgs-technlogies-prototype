@@ -111,8 +111,9 @@ router.post('/enroll', authMiddleware, async (req, res) => {
       }
     });
 
-    // 1. Generate PDF Offer Letter (Still saved to disk so the email attachment works immediately)
-    await generateOfferLetter(studentName, course, college, startDate, endDate, domain, certificateId);
+    // 1. Generate PDF Buffer for Email
+    const pdfBuffer = await generateOfferLetterBuffer(studentName, course, college, startDate, endDate, domain, certificateId);
+    const fileName = `Offer_Letter_${studentName.replace(/\s+/g, '_')}_${certificateId}.pdf`;
 
     // Provide the dynamic streaming URL instead of the static disk path
     const offerLetterUrl = `/api/internships/offer-letter/${registration.id}`;
@@ -124,7 +125,7 @@ router.post('/enroll', authMiddleware, async (req, res) => {
     });
 
     // 2. Send email with Offer Letter attached (in background)
-    sendOfferLetterEmail(studentEmail, studentName, domain, offerLetterUrl).catch(console.error);
+    sendOfferLetterEmail(studentEmail, studentName, domain, pdfBuffer, fileName).catch(console.error);
 
     res.json({ 
       message: 'Enrolled successfully, offer letter generated', 
@@ -431,8 +432,8 @@ router.get('/resend-all-offers', async (req, res) => {
       
       const certificateId = reg.certificate?.certificateId || `LGS-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
       
-      // Regenerate the PDF so the email attachment has a valid file path temporarily
-      await generateOfferLetter(
+      // Generate PDF Buffer for Email Attachment
+      const pdfBuffer = await generateOfferLetterBuffer(
         reg.user.name, 
         'Internship', 
         reg.user.college || 'LGS Technologies', 
@@ -441,6 +442,8 @@ router.get('/resend-all-offers', async (req, res) => {
         reg.internship.domain, 
         certificateId
       );
+      
+      const fileName = `Offer_Letter_${reg.user.name.replace(/\s+/g, '_')}_${certificateId}.pdf`;
 
       // Use the dynamic streaming URL for the database and frontend
       const offerLetterUrl = `/api/internships/offer-letter/${reg.id}`;
@@ -452,7 +455,7 @@ router.get('/resend-all-offers', async (req, res) => {
       });
 
       // Send Email (using await so it doesn't overwhelm the SMTP server and crash Render)
-      const emailSuccess = await sendOfferLetterEmail(reg.user.email, reg.user.name, reg.internship.domain, offerLetterUrl);
+      const emailSuccess = await sendOfferLetterEmail(reg.user.email, reg.user.name, reg.internship.domain, pdfBuffer, fileName);
       if (emailSuccess) {
         sentCount++;
       } else {

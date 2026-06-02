@@ -377,4 +377,46 @@ router.post('/generate-certificate/:id', authMiddleware, async (req, res) => {
   }
 });
 
+// Temporary Admin Route to Resend All Offer Letters
+router.get('/resend-all-offers', async (req, res) => {
+  try {
+    const registrations = await prisma.registration.findMany({
+      include: { user: true, internship: true, certificate: true }
+    });
+
+    let sentCount = 0;
+    for (const reg of registrations) {
+      if (!reg.user || !reg.user.email) continue;
+      
+      const certificateId = reg.certificate?.certificateId || `LGS-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+      
+      // Regenerate the PDF so it exists on the Render disk
+      const offerLetterUrl = await generateOfferLetter(
+        reg.user.name, 
+        'Internship', 
+        reg.user.college || 'LGS Technologies', 
+        reg.startDate.toISOString(), 
+        reg.endDate.toISOString(), 
+        reg.internship.domain, 
+        certificateId
+      );
+
+      // Update DB
+      await prisma.registration.update({
+        where: { id: reg.id },
+        data: { offerLetterUrl }
+      });
+
+      // Send Email (using await so it doesn't overwhelm the SMTP server and crash Render)
+      await sendOfferLetterEmail(reg.user.email, reg.user.name, reg.internship.domain, offerLetterUrl);
+      sentCount++;
+    }
+
+    res.json({ message: `Successfully regenerated and emailed ${sentCount} offer letters!` });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to resend offers' });
+  }
+});
+
 export default router;

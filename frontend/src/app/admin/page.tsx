@@ -26,9 +26,19 @@ export default function AdminDashboard() {
 
   const fetchRegistrations = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/registrations`);
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/registrations`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await res.json();
-      setRegistrations(data);
+      if (Array.isArray(data)) {
+        setRegistrations(data);
+      } else {
+        setRegistrations([]);
+        console.error('API did not return an array:', data);
+      }
     } catch (err) {
       console.error('Failed to fetch registrations', err);
     } finally {
@@ -42,8 +52,12 @@ export default function AdminDashboard() {
     }
     
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/registrations/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       if (res.ok) {
         alert('Application deleted successfully.');
@@ -85,9 +99,13 @@ export default function AdminDashboard() {
 
       setLoading(true);
       try {
+        const token = localStorage.getItem('token');
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/bulk-certificates`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({ records })
         });
         
@@ -226,7 +244,13 @@ export default function AdminDashboard() {
                               onClick={async () => {
                                 if(!confirm("Are you sure you want to approve this task and generate the certificate?")) return;
                                 try {
-                                  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/approve-task/${reg.id}`, { method: 'POST' });
+                                  const token = localStorage.getItem('token');
+                                  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/approve-task/${reg.id}`, { 
+                                    method: 'POST',
+                                    headers: {
+                                      'Authorization': `Bearer ${token}`
+                                    }
+                                  });
                                   if(res.ok) {
                                     alert("Task approved & Certificate generated!");
                                     fetchRegistrations();

@@ -1,24 +1,23 @@
-const nodemailer = require('nodemailer');
+const { sendOfferLetterEmail } = require('./services/emailService');
+const { generateOfferLetterBuffer } = require('./services/pdfService');
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'lgstechnologiess@gmail.com',
-    pass: 'chvp ylpo vegq eajw'.replace(/\s+/g, '') // remove spaces just in case
+async function testEmail() {
+  try {
+    console.log('Generating real buffer...');
+    const buffer = await generateOfferLetterBuffer('Logeshwaran D', 'Internship', 'Dg vaishnav college', new Date().toISOString(), new Date().toISOString(), 'Web Development', 'LGS-MANUAL-TEST');
+    
+    console.log('Sending email...');
+    const result = await sendOfferLetterEmail(
+      'logeshwarand01@gmail.com', // Sending directly to their registered email!
+      'Logeshwaran D',
+      'Web Development',
+      buffer,
+      'Offer_Letter_Manual.pdf'
+    );
+    console.log('Email send result:', result);
+  } catch (err) {
+    console.error('Error:', err);
   }
-});
+}
 
-const mailOptions = {
-  from: 'lgstechnologiess@gmail.com',
-  to: 'lgstechnologiess@gmail.com', // send to self to test
-  subject: 'Test Email from Nodemailer',
-  text: 'If you see this, nodemailer is working!'
-};
-
-transporter.sendMail(mailOptions, (error, info) => {
-  if (error) {
-    console.log('Error:', error);
-  } else {
-    console.log('Email sent:', info.response);
-  }
-});
+testEmail();

@@ -236,7 +236,42 @@ router.post('/task/:id', authMiddleware, async (req, res) => {
   }
 });
 
-import { generateCertificate } from '../services/certificateService';
+import { generateCertificateBuffer } from '../services/certificateService';
+
+// Generate and stream Certificate on the fly
+router.get('/certificate/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const registration = await prisma.registration.findUnique({
+      where: { id },
+      include: { user: true, internship: true, certificate: true }
+    });
+    
+    if (!registration) {
+      return res.status(404).send('Certificate not found');
+    }
+
+    const certificateId = registration.certificate?.certificateId || `LGS-PENDING-${Date.now()}`;
+    
+    const pdfBuffer = await generateCertificateBuffer(
+      registration.user.name,
+      'Engineering',
+      registration.user.college || 'College',
+      registration.internship.domain,
+      registration.startDate.toISOString(),
+      registration.endDate.toISOString(),
+      certificateId
+    );
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="Certificate_${registration.user.name.replace(/\s+/g, '_')}.pdf"`);
+    res.send(Buffer.from(pdfBuffer));
+  } catch (error) {
+    console.error('Stream Certificate Error:', error);
+    res.status(500).send('Failed to generate Certificate');
+  }
+});
 
 // Razorpay Create Order
 router.post('/create-order/:id', authMiddleware, async (req, res) => {
@@ -298,7 +333,7 @@ router.post('/verify-payment/:id', async (req, res) => {
     
     const certificateId = certificate ? certificate.certificateId : `LGS-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
     
-    const pdfUrl = await generateCertificate(
+    const pdfBuffer = await generateCertificateBuffer(
       registration.user.name,
       'Engineering',
       registration.user.college || 'College',
@@ -307,6 +342,8 @@ router.post('/verify-payment/:id', async (req, res) => {
       registration.endDate.toISOString(),
       certificateId
     );
+
+    const pdfUrl = `/api/internships/certificate/${registration.id}`;
 
     // 3. Save Certificate in DB
     if (certificate) {
@@ -382,7 +419,7 @@ router.post('/generate-certificate/:id', authMiddleware, async (req, res) => {
     
     const certificateId = certificate ? certificate.certificateId : `LGS-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
     
-    const pdfUrl = await generateCertificate(
+    const pdfBuffer = await generateCertificateBuffer(
       registration.user.name,
       'Engineering',
       registration.user.college || 'College',
@@ -391,6 +428,9 @@ router.post('/generate-certificate/:id', authMiddleware, async (req, res) => {
       registration.endDate.toISOString(),
       certificateId
     );
+
+    const pdfUrl = `/api/internships/certificate/${registration.id}`;
+    const fileName = `Certificate_${registration.user.name.replace(/\s+/g, '_')}.pdf`;
 
     // 3. Save Certificate in DB
     if (certificate) {
@@ -410,7 +450,7 @@ router.post('/generate-certificate/:id', authMiddleware, async (req, res) => {
     }
 
     // 4. Send Email with Certificate (in background)
-    sendCertificateEmail(registration.user.email, registration.user.name, registration.internship.domain, pdfUrl).catch(console.error);
+    sendCertificateEmail(registration.user.email, registration.user.name, registration.internship.domain, pdfBuffer, fileName).catch(console.error);
 
     res.json({ message: "Certificate Generated and Emailed Successfully", certificate });
   } catch (error) {

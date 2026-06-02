@@ -51,12 +51,8 @@ export const sendOfferLetterEmail = async (studentEmail: string, studentName: st
 /**
  * Sends an email with the Certificate attached
  */
-export const sendCertificateEmail = async (studentEmail: string, studentName: string, domain: string, pdfUrl: string) => {
+export const sendCertificateEmail = async (studentEmail: string, studentName: string, domain: string, pdfBuffer: Buffer, fileName: string) => {
   try {
-    // pdfUrl is like '/certificates/certificate_ID.pdf'
-    const fileName = path.basename(pdfUrl);
-    const filePath = path.join(__dirname, '..', 'public', 'certificates', fileName);
-
     const mailOptions = {
       from: `"LGS Technologies" <${process.env.EMAIL_USER || 'lgstechnologiess@gmail.com'}>`,
       to: studentEmail,
@@ -75,8 +71,8 @@ export const sendCertificateEmail = async (studentEmail: string, studentName: st
       `,
       attachments: [
         {
-          filename: `Certificate_${studentName.replace(/\s+/g, '_')}.pdf`,
-          path: filePath
+          filename: fileName,
+          content: pdfBuffer
         }
       ]
     };

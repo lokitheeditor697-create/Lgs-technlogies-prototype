@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -113,6 +114,47 @@ export default function Register() {
 
           {error && <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mb-6 p-4 bg-red-50/80 backdrop-blur-sm border border-red-100 text-red-600 rounded-xl text-sm font-medium flex items-center gap-2">{error}</motion.div>}
           {success && <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mb-6 p-4 bg-green-50/80 backdrop-blur-sm border border-green-100 text-green-600 rounded-xl text-sm font-medium flex items-center gap-2">{success}</motion.div>}
+
+          <div className="mb-6">
+            <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '669166573273-e0bn8vop2f9bclrreffpb1p9ap2e014c.apps.googleusercontent.com'}>
+              <div className="flex justify-center">
+                <GoogleLogin
+                  onSuccess={async (credentialResponse) => {
+                    setLoading(true);
+                    setError('');
+                    try {
+                      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/google`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token: credentialResponse.credential })
+                      });
+                      const data = await res.json();
+                      if (!res.ok) throw new Error(data.error || 'Google login failed');
+                      
+                      localStorage.setItem('token', data.token);
+                      localStorage.setItem('user', JSON.stringify(data.user));
+                      window.location.href = '/';
+                    } catch (err: any) {
+                      setError(err.message);
+                      setLoading(false);
+                    }
+                  }}
+                  onError={() => {
+                    setError('Google Login Failed');
+                  }}
+                />
+              </div>
+            </GoogleOAuthProvider>
+            
+            <div className="relative mt-8 mb-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200"></div>
+              </div>
+              <div className="relative flex justify-center text-sm font-medium">
+                <span className="px-4 bg-white text-gray-500 rounded-full border border-gray-100">Or continue with email</span>
+              </div>
+            </div>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>

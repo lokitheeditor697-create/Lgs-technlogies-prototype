@@ -4,6 +4,9 @@ import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 import crypto from 'crypto';
 import { sendPasswordResetEmail } from '../services/emailService';
+import { OAuth2Client } from 'google-auth-library';
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || '669166573273-e0bn8vop2f9bclrreffpb1p9ap2e014c.apps.googleusercontent.com');
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -176,5 +179,53 @@ router.post('/reset-password', async (req, res) => {
   } catch (error) {
     console.error('Reset password error:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.post('/google', async (req, res) => {
+  try {
+    const { token } = req.body;
+    
+    // Verify Google Token
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID || '669166573273-e0bn8vop2f9bclrreffpb1p9ap2e014c.apps.googleusercontent.com',
+    });
+    
+    const payload = ticket.getPayload();
+    if (!payload || !payload.email) {
+      return res.status(400).json({ error: 'Invalid Google token' });
+    }
+    
+    const { email, name } = payload;
+    
+    // Check if user exists
+    let user = await prisma.user.findUnique({ where: { email } });
+    
+    if (!user) {
+      // Auto-create user with random secure password
+      const randomPassword = crypto.randomBytes(16).toString('hex');
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+      user = await prisma.user.create({
+        data: {
+          email,
+          name: name || 'Student',
+          password: hashedPassword,
+        }
+      });
+    }
+    
+    // Generate our app's JWT
+    const jwtToken = jwt.sign(
+      { id: user.id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    
+    res.json({ token: jwtToken, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+    
+  } catch (error) {
+    console.error('Google Auth Error:', error);
+    res.status(500).json({ error: 'Failed to authenticate with Google' });
   }
 });

@@ -53,9 +53,9 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFC] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[#FAFAFC] flex flex-col items-center justify-center py-12 px-4 relative overflow-x-hidden">
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div 
           animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
@@ -135,19 +135,25 @@ export default function Login() {
               </div>
             </motion.div>
 
-            <motion.button 
+            <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              whileHover={{ scale: 1.01, translateY: -2 }}
-              whileTap={{ scale: 0.98 }}
-              type="submit" 
-              disabled={loading} 
-              className={`w-full relative group overflow-hidden text-white font-bold text-lg py-4 rounded-xl mt-8 transition-all duration-300 shadow-[0_8px_20px_rgba(37,99,235,0.2)] ${loading ? 'bg-blue-400' : 'bg-blue-600 hover:shadow-[0_8px_25px_rgba(37,99,235,0.4)]'}`}
             >
-              <span className="relative z-10">{loading ? 'Signing In...' : 'Sign In'}</span>
-              {!loading && <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>}
-            </motion.button>
+              <div className="flex justify-end mb-4">
+                <Link href="/forgot-password" className="text-sm font-bold text-blue-600 hover:text-blue-800 transition">
+                  Forgot Password?
+                </Link>
+              </div>
+              <button 
+                type="submit" 
+                disabled={loading} 
+                className={`w-full relative group overflow-hidden text-white font-bold text-lg py-4 rounded-xl transition-all duration-300 shadow-[0_8px_20px_rgba(37,99,235,0.2)] ${loading ? 'bg-blue-400' : 'bg-blue-600 hover:shadow-[0_8px_25px_rgba(37,99,235,0.4)]'}`}
+              >
+                <span className="relative z-10">{loading ? 'Signing In...' : 'Sign In'}</span>
+                {!loading && <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>}
+              </button>
+            </motion.div>
           </form>
 
           <div className="mb-2 mt-8">

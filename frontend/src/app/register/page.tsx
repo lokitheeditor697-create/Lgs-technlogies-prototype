@@ -74,9 +74,9 @@ export default function Register() {
   const labelClasses = "block text-sm font-bold text-gray-700 mb-2";
 
   return (
-    <div className="min-h-screen bg-[#FAFAFC] flex items-center justify-center p-4 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-[#FAFAFC] flex flex-col items-center justify-center py-12 px-4 relative overflow-x-hidden">
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 pointer-events-none fixed">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div 
           animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}

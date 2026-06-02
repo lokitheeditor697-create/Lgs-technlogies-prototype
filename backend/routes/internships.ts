@@ -111,8 +111,11 @@ router.post('/enroll', authMiddleware, async (req, res) => {
       }
     });
 
-    // 1. Generate PDF Offer Letter
-    const offerLetterUrl = await generateOfferLetter(studentName, course, college, startDate, endDate, domain, certificateId);
+    // 1. Generate PDF Offer Letter (Still saved to disk so the email attachment works immediately)
+    await generateOfferLetter(studentName, course, college, startDate, endDate, domain, certificateId);
+
+    // Provide the dynamic streaming URL instead of the static disk path
+    const offerLetterUrl = `/api/internships/offer-letter/${registration.id}`;
 
     // Save offerLetterUrl to registration
     const updatedRegistration = await prisma.registration.update({
@@ -130,6 +133,44 @@ router.post('/enroll', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('Enrollment error:', error);
     res.status(500).json({ error: 'Enrollment failed' });
+  }
+});
+
+import { generateOfferLetterBuffer } from '../services/pdfService';
+
+// Generate and stream Offer Letter on the fly (prevents Render disk wipe issues)
+router.get('/offer-letter/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Find Registration
+    const registration = await prisma.registration.findUnique({
+      where: { id },
+      include: { user: true, internship: true, certificate: true }
+    });
+    
+    if (!registration) {
+      return res.status(404).send('Offer Letter not found');
+    }
+
+    const certificateId = registration.certificate?.certificateId || `LGS-PENDING-${Date.now()}`;
+    
+    const pdfBuffer = await generateOfferLetterBuffer(
+      registration.user.name,
+      'Internship',
+      registration.user.college || 'LGS Technologies',
+      registration.startDate.toISOString(),
+      registration.endDate.toISOString(),
+      registration.internship.domain,
+      certificateId
+    );
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="Offer_Letter_${registration.user.name.replace(/\s+/g, '_')}.pdf"`);
+    res.send(Buffer.from(pdfBuffer));
+  } catch (error) {
+    console.error('Stream Offer Letter Error:', error);
+    res.status(500).send('Failed to generate Offer Letter');
   }
 });
 
@@ -390,8 +431,8 @@ router.get('/resend-all-offers', async (req, res) => {
       
       const certificateId = reg.certificate?.certificateId || `LGS-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
       
-      // Regenerate the PDF so it exists on the Render disk
-      const offerLetterUrl = await generateOfferLetter(
+      // Regenerate the PDF so the email attachment has a valid file path temporarily
+      await generateOfferLetter(
         reg.user.name, 
         'Internship', 
         reg.user.college || 'LGS Technologies', 
@@ -400,6 +441,9 @@ router.get('/resend-all-offers', async (req, res) => {
         reg.internship.domain, 
         certificateId
       );
+
+      // Use the dynamic streaming URL for the database and frontend
+      const offerLetterUrl = `/api/internships/offer-letter/${reg.id}`;
 
       // Update DB
       await prisma.registration.update({

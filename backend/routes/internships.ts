@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { generateOfferLetter } from '../services/pdfService';
 import { sendOfferLetterEmail, sendCertificateEmail } from '../services/emailService';
+import { appendRegistrationRow, updateRegistrationRow } from '../services/sheetsService';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import { authMiddleware } from '../middleware/auth';
@@ -127,6 +128,16 @@ router.post('/enroll', authMiddleware, async (req, res) => {
     // 2. Send email with Offer Letter attached (in background)
     sendOfferLetterEmail(studentEmail, studentName, domain, pdfBuffer, fileName).catch(console.error);
 
+    // 3. Append to Google Sheets (in background)
+    appendRegistrationRow({
+      date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      name: studentName,
+      email: studentEmail,
+      college: college || 'College',
+      domain: domain,
+      status: 'PENDING'
+    }).catch(console.error);
+
     res.json({ 
       message: 'Enrolled successfully, offer letter generated', 
       registration: updatedRegistration 
@@ -227,8 +238,13 @@ router.post('/task/:id', authMiddleware, async (req, res) => {
     
     const registration = await prisma.registration.update({
       where: { id },
-      data: { driveLink }
+      data: { driveLink },
+      include: { user: true }
     });
+    
+    // Update Google Sheets (in background)
+    updateRegistrationRow(registration.user.email, { taskLink: driveLink }).catch(console.error);
+    
     res.json(registration);
   } catch (error) {
     console.error('Failed to submit task:', error);
@@ -362,6 +378,12 @@ router.post('/verify-payment/:id', async (req, res) => {
       });
     }
 
+    // 4. Update Google Sheets (in background)
+    updateRegistrationRow(registration.user.email, { 
+      status: 'COMPLETED',
+      certificateLink: `https://lgs-technlogies-prototype.vercel.app/verify/${certificateId}`
+    }).catch(console.error);
+
     res.json({ message: "Payment verified and Certificate Generated", certificate });
   } catch (error) {
     console.error('Payment verify error:', error);
@@ -451,6 +473,12 @@ router.post('/generate-certificate/:id', authMiddleware, async (req, res) => {
 
     // 4. Send Email with Certificate (in background)
     sendCertificateEmail(registration.user.email, registration.user.name, registration.internship.domain, pdfBuffer, fileName).catch(console.error);
+
+    // 5. Update Google Sheets (in background)
+    updateRegistrationRow(registration.user.email, { 
+      status: 'COMPLETED',
+      certificateLink: `https://lgs-technlogies-prototype.vercel.app/verify/${certificateId}`
+    }).catch(console.error);
 
     res.json({ message: "Certificate Generated and Emailed Successfully", certificate });
   } catch (error) {

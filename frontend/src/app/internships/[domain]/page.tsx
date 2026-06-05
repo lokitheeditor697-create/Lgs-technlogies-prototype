@@ -16,6 +16,8 @@ const departments = [
   "Artificial Intelligence & Data Science",
   "Business Administration (BBA/MBA)",
   "Commerce (B.Com/M.Com)",
+  "B.CA ( Computer Application )",
+  "B.sc Computer science ",
   "Arts & Science",
   "Other"
 ];

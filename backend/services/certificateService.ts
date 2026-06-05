@@ -14,10 +14,9 @@ export async function generateCertificate(
 ): Promise<string> {
   return new Promise(async (resolve, reject) => {
     try {
-      // Portrait A4 size: [595.28, 841.89]
       const doc = new PDFDocument({
         size: 'A4',
-        layout: 'portrait',
+        layout: 'landscape',
         margin: 0
       });
 
@@ -32,77 +31,56 @@ export async function generateCertificate(
       const writeStream = fs.createWriteStream(filePath);
       doc.pipe(writeStream);
 
-      const templatePath = path.join(__dirname, '..', 'public', 'certificate-portrait.png');
-      if (fs.existsSync(templatePath)) {
-        doc.image(templatePath, 0, 0, { width: 595.28, height: 841.89 });
-        
-        // --- Cover Placeholders ---
-        // (No placeholders to cover anymore! The new template is super clean.)
+      const templatePath = path.join(__dirname, '..', 'public', 'certificate-landscape.png');
+      const fontPath = path.join(__dirname, '..', 'public', 'fonts', 'GreatVibes-Regular.ttf');
+      
+      if (fs.existsSync(fontPath)) {
+        doc.registerFont('Cursive', fontPath);
+      }
 
-        // --- Write Dynamic Text ---
+      if (fs.existsSync(templatePath)) {
+        doc.image(templatePath, 0, 0, { width: 841.89, height: 595.28 });
+        
         const formattedStart = new Date(startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
         const formattedEnd = new Date(endDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
         const issueDate = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-        doc.font('Helvetica').fontSize(14).fillColor('#333333'); // Increased font size to 14
+        // CERTIFY THAT
+        doc.font('Helvetica').fontSize(14).fillColor('#333333');
+        doc.text('THIS IS TO CERTIFY THAT', 0, 275, { align: 'center', width: 841.89, characterSpacing: 2 });
         
-        // Print date at the top right, moved slightly up and right
-        doc.text(`Date: ${issueDate}`, 435, 241);
-        
-        const startX = 60;
-        const textWidth = 475; // 595.28 - 120
-        
-        // Paragraph 1
-        // Removed 'align: justify' to prevent large gaps. Added spaces inside the strings instead of relying on continued auto-spacing.
-        doc.text('This is to certify that Mr./Ms. ', startX, 390, { continued: true, width: textWidth, lineGap: 8, align: 'left' })
-           .font('Helvetica-Bold').text(`${studentName} `, { continued: true })
-           .font('Helvetica').text('pursuing ', { continued: true })
-           .font('Helvetica-Bold').text(`${course} `, { continued: true })
-           .font('Helvetica').text('at ', { continued: true })
-           .font('Helvetica-Bold').text(`${college}, `, { continued: true })
-           .font('Helvetica').text('has successfully completed the internship training at ', { continued: true })
-           .font('Helvetica-Bold').text('LGS Technologies ', { continued: true })
-           .font('Helvetica').text('during the period from ', { continued: true })
-           .font('Helvetica-Bold').text(`${formattedStart} `, { continued: true })
-           .font('Helvetica').text('to ', { continued: true })
-           .font('Helvetica-Bold').text(`${formattedEnd}.`, { continued: false });
-           
-        doc.moveDown(1.5);
-        
-        // Paragraph 2
-        doc.font('Helvetica').text('During the internship period, the student worked on various tasks and projects related to ', { continued: true, width: textWidth, lineGap: 8, align: 'left' })
-           .font('Helvetica-Bold').text(`${domain} `, { continued: true })
-           .font('Helvetica').text('and demonstrated sincere effort, dedication, and enthusiasm towards learning and professional development.', { continued: false });
-        
-        doc.moveDown(1.5);
-        
-        // Paragraph 3
-        doc.text('We found his/her performance to be satisfactory and appreciate the hard work, discipline, and commitment shown throughout the internship.', { width: textWidth, lineGap: 8, align: 'left' });
-        
-        doc.moveDown(1.5);
-        
-        // Paragraph 4
-        doc.text('We wish him/her all the best for future endeavors.', { width: textWidth, lineGap: 8, align: 'left' });
+        // STUDENT NAME (Cursive)
+        if (fs.existsSync(fontPath)) {
+          doc.font('Cursive').fontSize(58).fillColor('#b88b7d');
+        } else {
+          doc.font('Helvetica-Bold').fontSize(40).fillColor('#333333');
+        }
+        doc.text(studentName, 0, 305, { align: 'center', width: 841.89 });
 
-        // Place - print directly on the line
-        doc.text('Chennai', 95, 700);
+        // PARAGRAPH
+        doc.font('Helvetica').fontSize(12).fillColor('#333333');
+        const paragraphText = `has successfully completed the ${domain} internship program at LGS Technologies from ${formattedStart} to ${formattedEnd}. During this internship, the student demonstrated dedication, enthusiasm, and a strong willingness to learn.\n\nWe wish the student all the best for their future endeavors.`;
+        doc.text(paragraphText, 150, 385, { align: 'center', width: 541.89, lineGap: 4 });
+
+        // DATE (bottom left)
+        doc.font('Helvetica-Oblique').fontSize(14).fillColor('#333333');
+        doc.text(issueDate, 120, 508, { width: 140, align: 'center' });
 
       } else {
         // Fallback drawing if the template isn't uploaded
-        doc.rect(20, 20, 555.28, 801.89).lineWidth(5).stroke('#1e3a8a');
+        doc.rect(20, 20, 801.89, 555.28).lineWidth(5).stroke('#1e3a8a');
         doc.fontSize(30).fillColor('#1e3a8a').text('INTERNSHIP CERTIFICATE', 0, 100, { align: 'center' });
-        doc.fontSize(16).fillColor('#4b5563').text('This certifies that', 0, 180, { align: 'center' });
         doc.fontSize(24).fillColor('#111827').text(studentName.toUpperCase(), 0, 220, { align: 'center' });
       }
 
       // Generate QR Code linking to verification portal
-      const verificationUrl = `http://localhost:3000/verify/${certificateId}`;
-      const qrImage = await QRCode.toDataURL(verificationUrl, { color: { dark: '#1e3a8a', light: '#ffffff' }, margin: 1 });
+      const verificationUrl = `https://lgs-technlogies-prototype.vercel.app/verify/${certificateId}`;
+      const qrImage = await QRCode.toDataURL(verificationUrl, { color: { dark: '#333333', light: '#ffffff' }, margin: 1 });
       
-      // Draw QR Code below the 'Place' line at the bottom left
-      doc.image(qrImage, 95, 720, { width: 60 });
-      doc.font('Helvetica-Bold').fontSize(8).fillColor('#666666').text(`Scan to Verify`, 95, 785, { width: 60, align: 'center' });
-      doc.font('Helvetica').fontSize(7).fillColor('#999999').text(`ID: ${certificateId}`, 85, 795, { width: 80, align: 'center' });
+      // Draw QR Code bottom right (moved left to avoid borders)
+      doc.image(qrImage, 650, 470, { width: 60 });
+      doc.font('Helvetica-Bold').fontSize(8).fillColor('#666666').text(`Scan to Verify`, 650, 535, { width: 60, align: 'center' });
+      doc.font('Helvetica').fontSize(7).fillColor('#999999').text(`ID: ${certificateId}`, 640, 545, { width: 80, align: 'center' });
 
       doc.end();
 
@@ -129,67 +107,60 @@ export async function generateCertificateBuffer(
 ): Promise<Buffer> {
   return new Promise(async (resolve, reject) => {
     try {
-      const doc = new PDFDocument({ size: 'A4', layout: 'portrait', margin: 0 });
+      const doc = new PDFDocument({ size: 'A4', layout: 'landscape', margin: 0 });
       const chunks: Buffer[] = [];
       doc.on('data', (chunk) => chunks.push(chunk));
       doc.on('end', () => resolve(Buffer.concat(chunks)));
       doc.on('error', reject);
 
-      const templatePath = path.join(__dirname, '..', 'public', 'certificate-portrait.png');
+      const templatePath = path.join(__dirname, '..', 'public', 'certificate-landscape.png');
+      const fontPath = path.join(__dirname, '..', 'public', 'fonts', 'GreatVibes-Regular.ttf');
+      
+      if (fs.existsSync(fontPath)) {
+        doc.registerFont('Cursive', fontPath);
+      }
+
       if (fs.existsSync(templatePath)) {
-        doc.image(templatePath, 0, 0, { width: 595.28, height: 841.89 });
+        doc.image(templatePath, 0, 0, { width: 841.89, height: 595.28 });
         
         const formattedStart = new Date(startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
         const formattedEnd = new Date(endDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
         const issueDate = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
+        // CERTIFY THAT
         doc.font('Helvetica').fontSize(14).fillColor('#333333');
-        doc.text(`Date: ${issueDate}`, 435, 241);
+        doc.text('THIS IS TO CERTIFY THAT', 0, 275, { align: 'center', width: 841.89, characterSpacing: 2 });
         
-        const startX = 60;
-        const textWidth = 475;
-        
-        doc.text('This is to certify that Mr./Ms. ', startX, 390, { continued: true, width: textWidth, lineGap: 8, align: 'left' })
-           .font('Helvetica-Bold').text(`${studentName} `, { continued: true })
-           .font('Helvetica').text('pursuing ', { continued: true })
-           .font('Helvetica-Bold').text(`${course} `, { continued: true })
-           .font('Helvetica').text('at ', { continued: true })
-           .font('Helvetica-Bold').text(`${college}, `, { continued: true })
-           .font('Helvetica').text('has successfully completed the internship training at ', { continued: true })
-           .font('Helvetica-Bold').text('LGS Technologies ', { continued: true })
-           .font('Helvetica').text('during the period from ', { continued: true })
-           .font('Helvetica-Bold').text(`${formattedStart} `, { continued: true })
-           .font('Helvetica').text('to ', { continued: true })
-           .font('Helvetica-Bold').text(`${formattedEnd}.`, { continued: false });
-           
-        doc.moveDown(1.5);
-        
-        doc.font('Helvetica').text('During the internship period, the student worked on various tasks and projects related to ', { continued: true, width: textWidth, lineGap: 8, align: 'left' })
-           .font('Helvetica-Bold').text(`${domain} `, { continued: true })
-           .font('Helvetica').text('and demonstrated sincere effort, dedication, and enthusiasm towards learning and professional development.', { continued: false });
-        
-        doc.moveDown(1.5);
-        
-        doc.text('We found his/her performance to be satisfactory and appreciate the hard work, discipline, and commitment shown throughout the internship.', { width: textWidth, lineGap: 8, align: 'left' });
-        
-        doc.moveDown(1.5);
-        
-        doc.text('We wish him/her all the best for future endeavors.', { width: textWidth, lineGap: 8, align: 'left' });
-        doc.text('Chennai', 95, 700);
+        // STUDENT NAME (Cursive)
+        if (fs.existsSync(fontPath)) {
+          doc.font('Cursive').fontSize(58).fillColor('#b88b7d'); // rose gold-ish color
+        } else {
+          doc.font('Helvetica-Bold').fontSize(40).fillColor('#333333');
+        }
+        doc.text(studentName, 0, 305, { align: 'center', width: 841.89 });
+
+        // PARAGRAPH
+        doc.font('Helvetica').fontSize(12).fillColor('#333333');
+        const paragraphText = `has successfully completed the ${domain} internship program at LGS Technologies from ${formattedStart} to ${formattedEnd}. During this internship, the student demonstrated dedication, enthusiasm, and a strong willingness to learn.\n\nWe wish the student all the best for their future endeavors.`;
+        doc.text(paragraphText, 150, 385, { align: 'center', width: 541.89, lineGap: 4 });
+
+        // DATE (bottom left)
+        doc.font('Helvetica-Oblique').fontSize(14).fillColor('#333333');
+        doc.text(issueDate, 120, 508, { width: 140, align: 'center' });
 
       } else {
-        doc.rect(20, 20, 555.28, 801.89).lineWidth(5).stroke('#1e3a8a');
+        doc.rect(20, 20, 801.89, 555.28).lineWidth(5).stroke('#1e3a8a');
         doc.fontSize(30).fillColor('#1e3a8a').text('INTERNSHIP CERTIFICATE', 0, 100, { align: 'center' });
-        doc.fontSize(16).fillColor('#4b5563').text('This certifies that', 0, 180, { align: 'center' });
         doc.fontSize(24).fillColor('#111827').text(studentName.toUpperCase(), 0, 220, { align: 'center' });
       }
 
       const verificationUrl = `https://lgs-technlogies-prototype.vercel.app/verify/${certificateId}`;
-      const qrImage = await QRCode.toDataURL(verificationUrl, { color: { dark: '#1e3a8a', light: '#ffffff' }, margin: 1 });
+      const qrImage = await QRCode.toDataURL(verificationUrl, { color: { dark: '#333333', light: '#ffffff' }, margin: 1 });
       
-      doc.image(qrImage, 95, 720, { width: 60 });
-      doc.font('Helvetica-Bold').fontSize(8).fillColor('#666666').text(`Scan to Verify`, 95, 785, { width: 60, align: 'center' });
-      doc.font('Helvetica').fontSize(7).fillColor('#999999').text(`ID: ${certificateId}`, 85, 795, { width: 80, align: 'center' });
+      // Draw QR Code bottom right
+      doc.image(qrImage, 650, 470, { width: 60 });
+      doc.font('Helvetica-Bold').fontSize(8).fillColor('#666666').text(`Scan to Verify`, 650, 535, { width: 60, align: 'center' });
+      doc.font('Helvetica').fontSize(7).fillColor('#999999').text(`ID: ${certificateId}`, 640, 545, { width: 80, align: 'center' });
 
       doc.end();
     } catch (error) {

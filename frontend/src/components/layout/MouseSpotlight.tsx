@@ -1,9 +1,19 @@
 "use client";
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 export default function MouseSpotlight() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const mouseX = useMotionValue(-1000);
+  const mouseY = useMotionValue(-1000);
+
+  // Smooth springs for the follower
+  const smoothX = useSpring(mouseX, { stiffness: 50, damping: 20, mass: 0.5 });
+  const smoothY = useSpring(mouseY, { stiffness: 50, damping: 20, mass: 0.5 });
+
+  // Faster springs for the precise ring
+  const ringX = useSpring(mouseX, { stiffness: 150, damping: 15, mass: 0.1 });
+  const ringY = useSpring(mouseY, { stiffness: 150, damping: 15, mass: 0.1 });
+
   const [isHovering, setIsHovering] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -11,18 +21,18 @@ export default function MouseSpotlight() {
     setMounted(true);
     
     const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
     };
 
     const handleMouseOver = (e: MouseEvent) => {
-      // Check if hovering over clickable elements or cards
       const target = e.target as HTMLElement;
       if (
         target.tagName.toLowerCase() === 'a' ||
         target.tagName.toLowerCase() === 'button' ||
         target.closest('a') ||
         target.closest('button') ||
-        target.closest('.group') // Custom class used for our cards
+        target.closest('.group')
       ) {
         setIsHovering(true);
       } else {
@@ -37,7 +47,7 @@ export default function MouseSpotlight() {
       window.removeEventListener('mousemove', updateMousePosition);
       window.removeEventListener('mouseover', handleMouseOver);
     };
-  }, []);
+  }, [mouseX, mouseY]);
 
   if (!mounted) return null;
 
@@ -46,32 +56,29 @@ export default function MouseSpotlight() {
       {/* Soft Follower Orb */}
       <motion.div
         className="fixed top-0 left-0 w-[400px] h-[400px] bg-blue-400/20 rounded-full pointer-events-none z-[-1] mix-blend-multiply filter blur-[80px]"
-        animate={{
-          x: mousePosition.x - 200,
-          y: mousePosition.y - 200,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 50,
-          damping: 20,
-          mass: 0.5
+        style={{
+          x: smoothX,
+          y: smoothY,
+          translateX: "-50%",
+          translateY: "-50%"
         }}
       />
       
       {/* Precise Cursor Ring */}
       <motion.div
         className="fixed top-0 left-0 w-8 h-8 border border-blue-500/50 rounded-full pointer-events-none z-[9999]"
+        style={{
+          x: ringX,
+          y: ringY,
+          translateX: "-50%",
+          translateY: "-50%"
+        }}
         animate={{
-          x: mousePosition.x - 16,
-          y: mousePosition.y - 16,
           scale: isHovering ? 1.5 : 1,
-          backgroundColor: isHovering ? "rgba(59, 130, 246, 0.1)" : "transparent",
+          backgroundColor: isHovering ? "rgba(59, 130, 246, 0.1)" : "rgba(59, 130, 246, 0)",
         }}
         transition={{
-          type: "spring",
-          stiffness: 150,
-          damping: 15,
-          mass: 0.1
+          duration: 0.2
         }}
       />
     </>

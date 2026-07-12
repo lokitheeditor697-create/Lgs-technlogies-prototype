@@ -87,24 +87,72 @@ export default function StudentDashboard() {
     setIsSaving(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/internships/generate-certificate/${registrationId}`, { 
+      const orderRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/internships/create-order/${registrationId}`, { 
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      const data = await res.json();
+      const order = await orderRes.json();
       
-      if (res.ok) {
-        alert('Certificate generated successfully! It has also been sent to your email.');
-        fetchRegistrations(user.id);
-      } else {
-        alert(data.error || 'Failed to generate certificate.');
-      }
+      if (!orderRes.ok) throw new Error(order.error || 'Failed to create order');
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: "LGS Technologies",
+        description: "Internship Certificate Fee",
+        order_id: order.id,
+        handler: async function (response: any) {
+          try {
+            const verifyRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/internships/verify-payment/${registrationId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            });
+            
+            const verifyData = await verifyRes.json();
+            if (verifyRes.ok) {
+              alert('Payment successful! Your certificate has been generated and emailed.');
+              fetchRegistrations(user.id);
+            } else {
+              alert(verifyData.error || 'Payment verification failed.');
+            }
+          } catch (err) {
+            console.error(err);
+            alert('Payment verification failed.');
+          } finally {
+            setIsSaving(false);
+          }
+        },
+        prefill: {
+          name: user.name,
+          email: user.email,
+          contact: user.phone
+        },
+        theme: {
+          color: "#2563EB"
+        }
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', function (response: any){
+        alert("Payment Failed. Reason: " + response.error.description);
+        setIsSaving(false);
+      });
+      rzp.open();
+
     } catch (err: any) {
       console.error(err);
-      alert('Failed to generate certificate.');
-    } finally {
+      alert('Failed to initiate payment.');
       setIsSaving(false);
     }
   };

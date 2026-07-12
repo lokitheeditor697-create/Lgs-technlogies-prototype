@@ -8,8 +8,8 @@ import crypto from 'crypto';
 import { authMiddleware } from '../middleware/auth';
 
 const razorpay = new Razorpay({
-  key_id: 'rzp_test_SvsbOeBc2Na56d',
-  key_secret: 'bdn9Vprn4qah97SkRnbzQ6EH'
+  key_id: process.env.RAZORPAY_KEY_ID as string,
+  key_secret: process.env.RAZORPAY_KEY_SECRET as string
 });
 
 const getPrice = (domain: string, duration: string) => {
@@ -327,7 +327,7 @@ router.post('/verify-payment/:id', async (req, res) => {
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSignature = crypto
-      .createHmac('sha256', 'bdn9Vprn4qah97SkRnbzQ6EH')
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET as string)
       .update(body.toString())
       .digest('hex');
 

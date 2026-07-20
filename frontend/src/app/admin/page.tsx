@@ -151,6 +151,55 @@ export default function AdminDashboard() {
 
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
+            <h2 className="text-lg font-bold text-gray-900 mb-1">Database Management</h2>
+            <p className="text-sm text-gray-500 max-w-lg">Export your current database to move servers, or import a previously exported database.</p>
+          </div>
+          <div className="flex gap-4">
+            <button
+              onClick={() => {
+                const token = localStorage.getItem('token');
+                window.open(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/admin/db/export?token=${token}`, '_blank');
+              }}
+              className="bg-purple-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-purple-700 transition shadow-lg shadow-purple-600/20"
+            >
+              Export Database
+            </button>
+            <label className="cursor-pointer bg-indigo-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-600/20 inline-block">
+              Import Database
+              <input type="file" accept=".db" className="hidden" onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                if (!window.confirm("WARNING: Importing a database will completely overwrite the current data. Make sure you have exported a backup first! Proceed?")) return;
+                
+                const formData = new FormData();
+                formData.append('database', file);
+                
+                try {
+                  const token = localStorage.getItem('token');
+                  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/admin/db/import`, {
+                    method: 'POST',
+                    headers: {
+                      'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                  });
+                  const data = await res.json();
+                  if (res.ok) {
+                    alert(data.message);
+                    window.location.reload();
+                  } else {
+                    alert('Error: ' + data.error);
+                  }
+                } catch (err) {
+                  alert('Upload failed');
+                }
+              }} />
+            </label>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div>
             <h2 className="text-lg font-bold text-gray-900 mb-1">Bulk Actions & Certificates</h2>
             <p className="text-sm text-gray-500 max-w-lg">Upload a CSV file with columns: <code className="bg-gray-100 px-1 rounded">name, email, college, domain, startDate, endDate</code> to instantly generate PDF certificates.</p>
           </div>

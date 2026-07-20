@@ -48,12 +48,21 @@ export default function StudentDashboard() {
   const fetchRegistrations = async (userId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com'}/api/internships/user/${userId}`, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://lgs-technlogies-prototype.onrender.com';
+      console.log('Fetching registrations from:', apiUrl);
+      const res = await fetch(`${apiUrl}/api/internships/user/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       const data = await res.json();
+      
+      if (res.status === 401 || (data.error && data.error.includes('expired'))) {
+        localStorage.clear();
+        window.location.href = '/login';
+        return;
+      }
+      
       if (Array.isArray(data)) {
         setRegistrations(data);
       } else {
@@ -226,11 +235,11 @@ export default function StudentDashboard() {
         {/* User Greeting Block */}
         <div className="flex items-center gap-6 mb-8 border-b border-gray-200 pb-8">
           <div className="w-24 h-24 rounded-full bg-blue-500 text-white flex items-center justify-center text-4xl font-bold shadow-lg">
-            {user.name.substring(0, 2).toUpperCase()}
+            {(user?.name || 'ST').substring(0, 2).toUpperCase()}
           </div>
           <div className="mt-12 mb-8 bg-blue-600 rounded-3xl p-8 sm:p-12 text-white shadow-[0_10px_40px_rgba(37,99,235,0.2)] relative overflow-hidden flex flex-col md:flex-row items-center justify-between z-10 w-full">
             <div className="relative z-10 text-center md:text-left mb-6 md:mb-0">
-              <h2 className="text-3xl font-extrabold mb-2 text-white drop-shadow-md tracking-tight">Welcome back, {user.name.split(' ')[0]}!</h2>
+              <h2 className="text-3xl font-extrabold mb-2 text-white drop-shadow-md tracking-tight">Welcome back, {(user?.name || 'Student').split(' ')[0]}!</h2>
               <p className="text-blue-100 font-medium text-lg">You are on track. Keep up the great work.</p>
             </div>
             <div className="relative z-10 flex gap-4">
@@ -369,7 +378,7 @@ export default function StudentDashboard() {
                                   </div>
                                 </div>
                                 <div className="flex flex-col gap-2">
-                                  <Link href={`/learn/${reg.id}`} className="block w-full py-2.5 bg-blue-600 text-white hover:bg-blue-700 text-center rounded-lg font-bold transition text-sm shadow-sm">
+                                  <Link href={`/learn?id=${reg.id}`} className="block w-full py-2.5 bg-blue-600 text-white hover:bg-blue-700 text-center rounded-lg font-bold transition text-sm shadow-sm">
                                     Continue Learning
                                   </Link>
                                   {reg.offerLetterUrl && (
@@ -483,7 +492,7 @@ export default function StudentDashboard() {
                               <p className="text-sm text-gray-500">Status: {reg.status}</p>
                             </div>
                           </div>
-                          <Link href={`/learn/${reg.id}`} className="px-4 py-2 text-sm font-bold text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
+                          <Link href={`/learn?id=${reg.id}`} className="px-4 py-2 text-sm font-bold text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
                             Continue
                           </Link>
                         </div>

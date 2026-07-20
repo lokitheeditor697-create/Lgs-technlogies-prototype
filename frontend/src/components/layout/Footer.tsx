@@ -35,8 +35,7 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-gray-900 mb-4">Contact</h3>
             <ul className="space-y-2 text-sm text-gray-500 font-medium">
-              <li>support@lgstechnologies.in</li>
-              <li>+91 98765 43210</li>
+              <li>lgstechnologiess@gmail.com</li>
             </ul>
           </div>
         </div>

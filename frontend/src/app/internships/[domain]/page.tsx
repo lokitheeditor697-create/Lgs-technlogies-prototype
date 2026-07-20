@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { FiCheckCircle } from 'react-icons/fi';
@@ -31,7 +31,7 @@ const years = [
   "Working Professional"
 ];
 
-export default function ApplyInternship() {
+function ApplyInternshipContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -146,6 +146,13 @@ export default function ApplyInternship() {
       
       const data = await res.json();
       
+      if (res.status === 401 || (data.error && data.error.includes('expired'))) {
+        localStorage.clear();
+        alert("Your session has expired. Please log in again.");
+        window.location.href = '/login';
+        return;
+      }
+      
       if (!res.ok) {
         throw new Error(data.error || 'Failed to enroll');
       }
@@ -160,7 +167,10 @@ export default function ApplyInternship() {
       setIsSubmitted(true);
     } catch (err: any) {
       console.error(err);
-      alert("Application failed: " + err.message);
+      let errMsg = err.message;
+      if (err.message === '[object Object]') errMsg = JSON.stringify(err);
+      if (!errMsg && typeof err === 'object') errMsg = JSON.stringify(err);
+      alert("Application failed: " + (errMsg || String(err)));
     } finally {
       setIsLoading(false);
     }
@@ -351,5 +361,13 @@ export default function ApplyInternship() {
         </form>
       </motion.div>
     </div>
+  );
+}
+
+export default function ApplyInternship() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#FAFAFC] flex items-center justify-center">Loading...</div>}>
+      <ApplyInternshipContent />
+    </Suspense>
   );
 }

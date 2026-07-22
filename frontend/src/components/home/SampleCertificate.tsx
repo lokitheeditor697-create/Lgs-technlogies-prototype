@@ -1,7 +1,7 @@
 "use client";
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { FiAward, FiCheckCircle, FiShield, FiExternalLink } from 'react-icons/fi';
+import { FiAward, FiCheckCircle, FiShield, FiExternalLink, FiQrCode, FiLock } from 'react-icons/fi';
 
 export default function SampleCertificate() {
   return (
@@ -44,29 +44,59 @@ export default function SampleCertificate() {
         {/* Certificate Display Showcase */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           
-          {/* Left Column: Sample Certificate Preview Card */}
+          {/* Left Column: Sample Certificate Preview Card (Protected from download/saving) */}
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-7 relative group"
+            className="lg:col-span-7 relative group select-none"
+            onContextMenu={(e) => e.preventDefault()}
           >
             <div className="relative rounded-2xl overflow-hidden border border-gray-200/80 shadow-xl bg-white p-2 group-hover:shadow-2xl transition-all duration-500">
-              <img 
-                src="/images/certificate-landscape.png" 
-                alt="LGS Technologies Sample Internship Certificate" 
-                className="w-full h-auto rounded-xl object-contain"
-                onError={(e) => {
-                  // Fallback if local image file isn't loaded
-                  e.currentTarget.src = 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1200&q=80';
-                }}
-              />
-              <div className="absolute inset-0 bg-blue-950/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl pointer-events-none">
-                <span className="bg-white/90 backdrop-blur px-5 py-2.5 rounded-full font-bold text-gray-900 text-sm shadow-md flex items-center gap-2">
-                  <FiShield className="text-blue-600" />
-                  <span>Sample Certificate Preview</span>
-                </span>
+              
+              {/* Certificate Image with protection */}
+              <div className="relative overflow-hidden rounded-xl">
+                <img 
+                  src="/images/certificate-landscape.png" 
+                  alt="LGS Technologies Sample Internship Certificate" 
+                  className="w-full h-auto rounded-xl object-contain pointer-events-none select-none"
+                  onDragStart={(e) => e.preventDefault()}
+                  onContextMenu={(e) => e.preventDefault()}
+                  onError={(e) => {
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1200&q=80';
+                  }}
+                />
+                
+                {/* Transparent Security Overlay Shielding Right Click & Drag */}
+                <div 
+                  className="absolute inset-0 z-10 cursor-default"
+                  onContextMenu={(e) => e.preventDefault()}
+                  onDragStart={(e) => e.preventDefault()}
+                ></div>
+
+                {/* Sample Live QR Code Overlay Badge */}
+                <Link 
+                  href="/verify"
+                  className="absolute bottom-4 right-4 z-20 bg-white/95 backdrop-blur-md border border-gray-200 p-3 rounded-xl shadow-xl hover:scale-105 transition-transform flex items-center gap-3 text-gray-900 group/qr"
+                  title="Click to Test Live QR Verification Portal"
+                >
+                  <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white text-xl shadow-md group-hover/qr:bg-blue-700 transition">
+                    <FiQrCode className="w-6 h-6" />
+                  </div>
+                  <div className="text-left pr-1">
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Sample QR Code</p>
+                    <p className="text-xs font-extrabold text-blue-600 flex items-center gap-1">
+                      Click to Test Verify <FiExternalLink className="w-3 h-3" />
+                    </p>
+                  </div>
+                </Link>
+              </div>
+
+              {/* Watermark Protection Bar */}
+              <div className="absolute top-4 left-4 z-20 bg-slate-900/80 backdrop-blur-md text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 border border-white/20">
+                <FiLock className="text-emerald-400 w-3.5 h-3.5" />
+                <span>Protected Sample Document</span>
               </div>
             </div>
           </motion.div>
@@ -116,9 +146,10 @@ export default function SampleCertificate() {
             <div className="pt-4">
               <Link 
                 href="/verify" 
-                className="inline-flex items-center gap-2 font-bold text-blue-600 hover:text-blue-700 transition"
+                className="inline-flex items-center gap-2 font-bold text-blue-600 hover:text-blue-700 transition bg-blue-50 px-5 py-3 rounded-xl border border-blue-100 hover:bg-blue-100/80"
               >
-                <span>Test Live Verification Portal</span>
+                <FiQrCode className="w-5 h-5 text-blue-600" />
+                <span>Test Live QR Verification Portal</span>
                 <FiExternalLink />
               </Link>
             </div>

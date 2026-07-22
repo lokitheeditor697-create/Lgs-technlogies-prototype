@@ -73,17 +73,15 @@ export default function SampleCertificate() {
                 />
                 
                 {/* Real Scannable QR Code placed directly on bottom-right of the certificate */}
-                <Link 
-                  href="/verify"
-                  title="Scan with phone camera or click to verify"
-                  className="absolute bottom-[9%] right-[9%] z-20 w-[11%] aspect-square bg-white p-1 rounded-md shadow-md hover:scale-110 transition-transform block border border-gray-300/80"
+                <div 
+                  className="absolute bottom-[9%] right-[9%] z-20 w-[11%] aspect-square bg-white p-1 rounded-md shadow-md border border-gray-300/80 pointer-events-none select-none"
                 >
                   <img 
                     src={sampleQrCodeUrl} 
-                    alt="Scan Sample QR Code" 
-                    className="w-full h-full object-contain pointer-events-none"
+                    alt="Sample QR Code" 
+                    className="w-full h-full object-contain pointer-events-none select-none"
                   />
-                </Link>
+                </div>
 
                 {/* Transparent Security Shielding Right Click & Drag */}
                 <div 

@@ -72,9 +72,9 @@ export default function SampleCertificate() {
                   }}
                 />
                 
-                {/* Real Scannable QR Code placed directly next to the signature line */}
+                {/* Real Scannable QR Code placed cleanly to the right of the signature line */}
                 <div 
-                  className="absolute bottom-[10%] right-[26%] z-20 w-[11%] aspect-square bg-white p-1 rounded-md shadow-md border border-gray-300/80 pointer-events-none select-none"
+                  className="absolute bottom-[12%] right-[19%] z-20 w-[10.5%] aspect-square bg-white p-1 rounded-md shadow-md border border-gray-300/80 pointer-events-none select-none"
                 >
                   <img 
                     src={sampleQrCodeUrl} 

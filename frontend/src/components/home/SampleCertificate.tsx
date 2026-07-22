@@ -1,10 +1,13 @@
 "use client";
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { FiAward, FiCheckCircle, FiShield, FiExternalLink, FiLock } from 'react-icons/fi';
+import { FiAward, FiCheckCircle, FiShield, FiExternalLink } from 'react-icons/fi';
 import { FaQrcode } from 'react-icons/fa';
 
 export default function SampleCertificate() {
+  // Real scannable QR Code URL linking to the live verify page
+  const sampleQrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://lgs.aimtechsolutions.in/verify";
+
   return (
     <section className="py-20 bg-[#FAFAFC] border-t border-gray-200/80 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -45,7 +48,7 @@ export default function SampleCertificate() {
         {/* Certificate Display Showcase */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           
-          {/* Left Column: Sample Certificate Preview Card (Protected from download/saving) */}
+          {/* Left Column: Sample Certificate Preview Card */}
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -56,7 +59,7 @@ export default function SampleCertificate() {
           >
             <div className="relative rounded-2xl overflow-hidden border border-gray-200/80 shadow-xl bg-white p-2 group-hover:shadow-2xl transition-all duration-500">
               
-              {/* Certificate Image with protection */}
+              {/* Certificate Container */}
               <div className="relative overflow-hidden rounded-xl">
                 <img 
                   src="/images/certificate-landscape.png" 
@@ -69,36 +72,27 @@ export default function SampleCertificate() {
                   }}
                 />
                 
-                {/* Transparent Security Overlay Shielding Right Click & Drag */}
+                {/* Real Scannable QR Code placed directly on bottom-right of the certificate */}
+                <Link 
+                  href="/verify"
+                  title="Scan with phone camera or click to verify"
+                  className="absolute bottom-[9%] right-[9%] z-20 w-[11%] aspect-square bg-white p-1 rounded-md shadow-md hover:scale-110 transition-transform block border border-gray-300/80"
+                >
+                  <img 
+                    src={sampleQrCodeUrl} 
+                    alt="Scan Sample QR Code" 
+                    className="w-full h-full object-contain pointer-events-none"
+                  />
+                </Link>
+
+                {/* Transparent Security Shielding Right Click & Drag */}
                 <div 
                   className="absolute inset-0 z-10 cursor-default"
                   onContextMenu={(e) => e.preventDefault()}
                   onDragStart={(e) => e.preventDefault()}
                 ></div>
-
-                {/* Sample Live QR Code Overlay Badge */}
-                <Link 
-                  href="/verify"
-                  className="absolute bottom-4 right-4 z-20 bg-white/95 backdrop-blur-md border border-gray-200 p-3 rounded-xl shadow-xl hover:scale-105 transition-transform flex items-center gap-3 text-gray-900 group/qr"
-                  title="Click to Test Live QR Verification Portal"
-                >
-                  <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white text-xl shadow-md group-hover/qr:bg-blue-700 transition">
-                    <FaQrcode className="w-6 h-6" />
-                  </div>
-                  <div className="text-left pr-1">
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Sample QR Code</p>
-                    <p className="text-xs font-extrabold text-blue-600 flex items-center gap-1">
-                      Click to Test Verify <FiExternalLink className="w-3 h-3" />
-                    </p>
-                  </div>
-                </Link>
               </div>
 
-              {/* Watermark Protection Bar */}
-              <div className="absolute top-4 left-4 z-20 bg-slate-900/80 backdrop-blur-md text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 border border-white/20">
-                <FiLock className="text-emerald-400 w-3.5 h-3.5" />
-                <span>Protected Sample Document</span>
-              </div>
             </div>
           </motion.div>
 

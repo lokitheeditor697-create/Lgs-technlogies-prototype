@@ -1,7 +1,8 @@
 "use client";
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { FiAward, FiCheckCircle, FiShield, FiExternalLink, FiQrCode, FiLock } from 'react-icons/fi';
+import { FiAward, FiCheckCircle, FiShield, FiExternalLink, FiLock } from 'react-icons/fi';
+import { FaQrcode } from 'react-icons/fa';
 
 export default function SampleCertificate() {
   return (
@@ -82,7 +83,7 @@ export default function SampleCertificate() {
                   title="Click to Test Live QR Verification Portal"
                 >
                   <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white text-xl shadow-md group-hover/qr:bg-blue-700 transition">
-                    <FiQrCode className="w-6 h-6" />
+                    <FaQrcode className="w-6 h-6" />
                   </div>
                   <div className="text-left pr-1">
                     <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Sample QR Code</p>
@@ -148,7 +149,7 @@ export default function SampleCertificate() {
                 href="/verify" 
                 className="inline-flex items-center gap-2 font-bold text-blue-600 hover:text-blue-700 transition bg-blue-50 px-5 py-3 rounded-xl border border-blue-100 hover:bg-blue-100/80"
               >
-                <FiQrCode className="w-5 h-5 text-blue-600" />
+                <FaQrcode className="w-5 h-5 text-blue-600" />
                 <span>Test Live QR Verification Portal</span>
                 <FiExternalLink />
               </Link>

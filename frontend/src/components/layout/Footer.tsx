@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <img src="/images/logo.png" alt="LGS Technologies" className="h-10 object-contain" />
+              <img src="/images/logo.png" alt="LGS Technologies" className="h-12 sm:h-14 object-contain" />
             </div>
             <p className="text-gray-500 text-sm font-medium">
               Empowering students with real-world skills and practical experience through industry-recognized internships.

@@ -154,7 +154,7 @@ export default function Hero() {
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                     <span>Live Verification Engine</span>
                   </span>
-                  <span className="text-blue-400 font-bold">100% ISO Certified</span>
+                  <span className="text-blue-400 font-bold">100% Verifiable Credentials</span>
                 </div>
               </div>
 

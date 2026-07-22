@@ -38,7 +38,7 @@ export default function Navbar() {
       <div className="px-6 sm:px-8">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center gap-2 group">
-            <img src="/images/logo.png" alt="LGS Technologies" className="h-10 object-contain" />
+            <img src="/images/logo.png" alt="LGS Technologies" className="h-12 sm:h-14 md:h-16 object-contain py-1" />
           </Link>
 
           <div className="hidden md:flex items-center gap-8">

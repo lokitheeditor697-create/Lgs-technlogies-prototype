@@ -17,7 +17,7 @@ export default function SampleCertificate() {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-600 font-bold text-xs uppercase tracking-wider mb-4"
           >
             <FiAward className="w-4 h-4" />
-            <span>ISO Certified Credentials</span>
+            <span>Official Verified Credentials</span>
           </motion.div>
           
           <motion.h2 

@@ -4,7 +4,6 @@ import Hero from '@/components/home/Hero';
 import Domains from '@/components/home/Domains';
 import FeaturedInternships from '@/components/home/FeaturedInternships';
 import Commitment from '@/components/home/Commitment';
-import FreeResources from '@/components/home/FreeResources';
 import SampleCertificate from '@/components/home/SampleCertificate';
 import Testimonials from '@/components/home/Testimonials';
 
@@ -16,7 +15,6 @@ export default function Home() {
         <Hero />
         <Domains />
         <FeaturedInternships />
-        <FreeResources />
         <Commitment />
         <SampleCertificate />
         <Testimonials />

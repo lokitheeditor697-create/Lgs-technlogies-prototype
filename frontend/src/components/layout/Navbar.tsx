@@ -48,9 +48,6 @@ export default function Navbar() {
                 <Link href="/#internships" className="text-sm font-semibold text-gray-600 hover:text-blue-600 transition-colors">Internships</Link>
                 <Link href="/#about" className="text-sm font-semibold text-gray-600 hover:text-blue-600 transition-colors">About Us</Link>
                 <Link href="/verify" className="text-sm font-semibold text-gray-600 hover:text-blue-600 transition-colors">Verify Certificate</Link>
-                <a href="https://drive.google.com/drive/u/0/folders/1WPd51T3vzVsiK4GgXW_-Dc8UOW2mXBnS" target="_blank" rel="noreferrer" className="text-sm font-bold text-amber-600 hover:text-amber-700 bg-amber-50 px-3 py-1 rounded-full border border-amber-200/60 transition-all flex items-center gap-1">
-                  🎁 Free Resources
-                </a>
                 <Link href="/#footer" className="text-sm font-semibold text-gray-600 hover:text-blue-600 transition-colors">Contact</Link>
               </>
             )}

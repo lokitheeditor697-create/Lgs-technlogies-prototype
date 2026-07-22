@@ -218,9 +218,7 @@ export default function StudentDashboard() {
   const completedCount = registrations.filter(r => r.status === 'COMPLETED').length;
   
   let displayedRegistrations = registrations;
-  if (activeCourseTab === 'active') {
-    displayedRegistrations = registrations.filter(r => r.status === 'APPROVED');
-  } else if (activeCourseTab === 'completed') {
+  if (activeCourseTab === 'completed') {
     displayedRegistrations = registrations.filter(r => r.status === 'COMPLETED');
   }
 
@@ -297,12 +295,6 @@ export default function StudentDashboard() {
                     className={`whitespace-nowrap px-6 py-3 font-medium text-sm transition-colors border-b-2 ${activeCourseTab === 'all' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
                   >
                     Enrolled Courses ({registrations.length})
-                  </button>
-                  <button 
-                    onClick={() => setActiveCourseTab('active')}
-                    className={`whitespace-nowrap px-6 py-3 font-medium text-sm transition-colors border-b-2 ${activeCourseTab === 'active' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                  >
-                    Active Courses
                   </button>
                   <button 
                     onClick={() => setActiveCourseTab('completed')}

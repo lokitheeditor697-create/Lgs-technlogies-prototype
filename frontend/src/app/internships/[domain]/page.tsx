@@ -267,8 +267,20 @@ function ApplyInternshipContent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
-              <label className={labelClasses}>Phone Number</label>
-              <input required type="tel" name="phone" defaultValue={user?.phone || ''} placeholder="+91 98765 43210" className={inputClasses} />
+              <label className={labelClasses}>Phone Number (10 Digits)</label>
+              <input 
+                required 
+                type="tel" 
+                name="phone" 
+                maxLength={10}
+                pattern="[0-9]{10}"
+                onInput={(e) => {
+                  e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, '');
+                }}
+                defaultValue={user?.phone || ''} 
+                placeholder="9876543210" 
+                className={inputClasses} 
+              />
             </motion.div>
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.35 }}>
               <label className={labelClasses}>College / Institution</label>

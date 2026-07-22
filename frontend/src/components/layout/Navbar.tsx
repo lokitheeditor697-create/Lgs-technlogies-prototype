@@ -48,6 +48,7 @@ export default function Navbar() {
                 <Link href="/#internships" className="text-sm font-semibold text-gray-600 hover:text-blue-600 transition-colors">Internships</Link>
                 <Link href="/#about" className="text-sm font-semibold text-gray-600 hover:text-blue-600 transition-colors">About Us</Link>
                 <Link href="/verify" className="text-sm font-semibold text-gray-600 hover:text-blue-600 transition-colors">Verify Certificate</Link>
+                <Link href="/#footer" className="text-sm font-semibold text-gray-600 hover:text-blue-600 transition-colors">Contact</Link>
               </>
             )}
           </div>

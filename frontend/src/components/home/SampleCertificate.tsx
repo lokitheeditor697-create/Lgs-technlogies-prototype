@@ -84,7 +84,7 @@ export default function SampleCertificate() {
                 </div>
 
                 {/* Official Black Ink Signature Overlay */}
-                <div className="absolute bottom-[12.5%] left-[48%] z-20 w-[9.5%] aspect-auto pointer-events-none select-none">
+                <div className="absolute bottom-[13.5%] left-[44.5%] z-20 w-[14%] aspect-auto pointer-events-none select-none">
                   <img 
                     src="/images/signature.png" 
                     alt="Authorized Signature" 

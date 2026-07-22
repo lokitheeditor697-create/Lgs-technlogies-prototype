@@ -83,6 +83,15 @@ export default function SampleCertificate() {
                   />
                 </div>
 
+                {/* Official Black Ink Signature Overlay */}
+                <div className="absolute bottom-[14%] left-[45%] z-20 w-[18%] aspect-auto pointer-events-none select-none">
+                  <img 
+                    src="/images/signature.png" 
+                    alt="Authorized Signature" 
+                    className="w-full h-auto object-contain pointer-events-none select-none"
+                  />
+                </div>
+
                 {/* Transparent Security Shielding Right Click & Drag */}
                 <div 
                   className="absolute inset-0 z-10 cursor-default"

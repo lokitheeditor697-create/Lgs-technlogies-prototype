@@ -30,10 +30,10 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight mb-6 leading-[1.12]"
+              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-[1.12]"
             >
               Build Real Projects. <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
+              <span className="text-blue-600">
                 Earn Verified Credentials.
               </span>
             </motion.h1>
@@ -56,7 +56,7 @@ export default function Hero() {
             >
               <Link 
                 href="#internships" 
-                className="inline-flex items-center justify-center gap-2.5 px-7 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-bold text-base shadow-[0_8px_20px_rgba(37,99,235,0.3)] hover:shadow-[0_10px_25px_rgba(37,99,235,0.45)] transition-all duration-300 transform hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2.5 px-7 py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold text-base shadow-lg shadow-slate-900/20 transition-all duration-300 transform hover:-translate-y-0.5"
               >
                 <span>Explore Internships</span>
                 <FiArrowRight className="w-5 h-5" />
@@ -108,8 +108,8 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="relative mx-auto max-w-lg lg:max-w-none"
             >
-              {/* Image Container with Glassmorphic Border */}
-              <div className="relative rounded-[32px] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] border-8 border-white bg-white">
+              {/* Image Container with Sleek Shadow */}
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/10 ring-1 ring-slate-900/5 bg-white">
                  <Image 
                    src="/hero-isometric.jpg" 
                    alt="3D isometric illustration of a sleek modern laptop" 
@@ -125,31 +125,31 @@ export default function Hero() {
 
               {/* Floating Badge: Verified Badge */}
               <motion.div 
-                animate={{ y: [0, -8, 0] }}
+                animate={{ y: [0, -6, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -bottom-6 -left-6 sm:-left-10 bg-white/95 backdrop-blur-xl border border-gray-200 p-4 rounded-2xl shadow-xl flex items-center gap-4 text-gray-900 z-20"
+                className="absolute -bottom-4 -left-4 sm:-left-8 bg-white/95 backdrop-blur-md border border-gray-200 p-3 rounded-xl shadow-lg shadow-slate-900/5 flex items-center gap-3 text-slate-900 z-20"
               >
-                <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold border-4 border-white shadow-sm">
-                  <FiCheckCircle className="w-6 h-6" />
+                <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 font-bold border border-emerald-100">
+                  <FiCheckCircle className="w-5 h-5" />
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Credential</p>
-                  <p className="text-sm font-extrabold text-gray-900">Verified Issuer</p>
+                <div className="pr-2">
+                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Credential</p>
+                  <p className="text-sm font-bold text-slate-900">Verified Issuer</p>
                 </div>
               </motion.div>
 
               {/* Floating Badge: Counter */}
               <motion.div 
-                animate={{ y: [0, 8, 0] }}
+                animate={{ y: [0, 6, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute -top-6 -right-6 sm:-right-8 bg-white/95 backdrop-blur-xl border border-gray-200 p-4 rounded-2xl shadow-xl flex items-center gap-4 text-gray-900 z-20"
+                className="absolute -top-4 -right-4 sm:-right-6 bg-white/95 backdrop-blur-md border border-gray-200 p-3 rounded-xl shadow-lg shadow-slate-900/5 flex items-center gap-3 text-slate-900 z-20"
               >
-                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold border-4 border-white shadow-sm">
-                  <FiAward className="w-6 h-6" />
+                <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 font-bold border border-blue-100">
+                  <FiAward className="w-5 h-5" />
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Network</p>
-                  <p className="text-sm font-extrabold text-blue-600">1K+ Hiring Partners</p>
+                <div className="pr-2">
+                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Network</p>
+                  <p className="text-sm font-bold text-slate-900">1K+ Partners</p>
                 </div>
               </motion.div>
             </motion.div>

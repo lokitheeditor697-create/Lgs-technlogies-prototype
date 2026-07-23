@@ -1,5 +1,6 @@
 "use client";
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { FiArrowRight, FiShield, FiCode, FiCheckCircle, FiAward, FiTerminal, FiMail } from 'react-icons/fi';
 
@@ -99,7 +100,7 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          {/* Right Column: Premium Dashboard Preview Card */}
+          {/* Right Column: Premium Hero Image */}
           <div className="lg:col-span-5 relative">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -107,68 +108,19 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="relative mx-auto max-w-lg lg:max-w-none"
             >
-              {/* Glassmorphic Dashboard UI */}
-              <div className="bg-white/40 backdrop-blur-2xl border border-white/60 rounded-[32px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden p-6 sm:p-8 relative">
-                 <div className="absolute top-0 right-0 w-40 h-40 bg-blue-400/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
-                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-purple-400/10 rounded-full blur-3xl -ml-10 -mb-10"></div>
+              {/* Image Container with Glassmorphic Border */}
+              <div className="relative rounded-[32px] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] border-8 border-white bg-white">
+                 <Image 
+                   src="/hero-isometric.jpg" 
+                   alt="3D isometric illustration of a sleek modern laptop" 
+                   width={800} 
+                   height={600} 
+                   className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700 ease-out"
+                   priority
+                 />
                  
-                 {/* Header */}
-                 <div className="flex items-center justify-between mb-8 relative z-10">
-                   <div className="flex items-center gap-4">
-                     <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 p-[2px] shadow-sm">
-                       <div className="w-full h-full bg-white rounded-full flex items-center justify-center text-xl font-black text-transparent bg-clip-text bg-gradient-to-br from-blue-600 to-indigo-600">
-                         ST
-                       </div>
-                     </div>
-                     <div>
-                       <h3 className="font-extrabold text-gray-900 text-lg sm:text-xl">Student Dashboard</h3>
-                       <p className="text-sm text-gray-500 font-bold">Full Stack Web Development</p>
-                     </div>
-                   </div>
-                   <div className="px-4 py-1.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full shadow-sm">
-                     Active Track
-                   </div>
-                 </div>
-
-                 {/* Progress Section */}
-                 <div className="bg-white/80 rounded-2xl p-6 mb-6 shadow-sm border border-white relative z-10">
-                   <div className="flex justify-between items-center mb-4">
-                     <span className="text-sm font-bold text-gray-700">Internship Progress</span>
-                     <span className="text-lg font-black text-blue-600">85%</span>
-                   </div>
-                   <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner">
-                     <motion.div 
-                       initial={{ width: 0 }} 
-                       animate={{ width: "85%" }} 
-                       transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
-                       className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full relative"
-                     >
-                       <div className="absolute inset-0 bg-white/20 w-full h-full animate-[shimmer_2s_infinite]"></div>
-                     </motion.div>
-                   </div>
-                 </div>
-
-                 {/* Modules */}
-                 <div className="space-y-4 relative z-10">
-                    {[
-                      { icon: <FiCode />, title: 'Frontend Architecture', status: 'Completed', color: 'text-emerald-500', bg: 'bg-emerald-50 border-emerald-100' },
-                      { icon: <FiTerminal />, title: 'Backend Node APIs', status: 'In Progress', color: 'text-blue-500', bg: 'bg-blue-50 border-blue-100' },
-                      { icon: <FiShield />, title: 'Deployment & Security', status: 'Locked', color: 'text-gray-400', bg: 'bg-gray-50 border-gray-100' }
-                    ].map((mod, i) => (
-                      <div key={i} className="flex items-center justify-between p-4 bg-white/70 rounded-2xl border border-white hover:bg-white hover:shadow-apple-hover transition-all duration-300">
-                        <div className="flex items-center gap-4">
-                          <div className={`p-3 rounded-xl border ${mod.bg} ${mod.color}`}>
-                            {mod.icon}
-                          </div>
-                          <span className="font-bold text-gray-800 text-sm">{mod.title}</span>
-                        </div>
-                        <span className={`text-xs font-extrabold tracking-wide uppercase ${mod.status === 'Completed' ? 'text-emerald-600' : mod.status === 'In Progress' ? 'text-blue-600' : 'text-gray-400'}`}>
-                          {mod.status}
-                        </span>
-                      </div>
-                    ))}
-                 </div>
-
+                 {/* Gradient Overlay for better contrast on bottom edge */}
+                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/30 to-transparent pointer-events-none"></div>
               </div>
 
               {/* Floating Badge: Verified Badge */}

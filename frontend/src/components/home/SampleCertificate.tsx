@@ -3,6 +3,9 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FiAward, FiCheckCircle, FiShield, FiExternalLink } from 'react-icons/fi';
 import { FaQrcode } from 'react-icons/fa';
+import { Great_Vibes } from 'next/font/google';
+
+const greatVibes = Great_Vibes({ weight: '400', subsets: ['latin'] });
 
 export default function SampleCertificate() {
   // Real scannable QR Code URL linking to the live verify page
@@ -81,6 +84,10 @@ export default function SampleCertificate() {
                     alt="Sample QR Code" 
                     className="w-full h-full object-contain pointer-events-none select-none"
                   />
+                  <div className="absolute -bottom-6 left-0 w-full text-center">
+                     <p className="text-[0.6vw] font-bold text-[#666]">Scan to Verify</p>
+                     <p className="text-[0.55vw] text-[#999]">ID: LGS-2026-89X2A</p>
+                  </div>
                 </div>
 
                 {/* Official Black Ink Signature Overlay */}
@@ -92,9 +99,27 @@ export default function SampleCertificate() {
                   />
                 </div>
 
+                {/* Sample Certificate Data Overlay */}
+                <div className="absolute inset-0 z-10 pointer-events-none flex flex-col items-center pt-[15%] text-center">
+                  <p className="text-[1vw] tracking-[0.2em] text-[#333333] font-sans font-medium mb-[2vw]">THIS IS TO CERTIFY THAT</p>
+                  <h3 className={`text-[4.5vw] text-[#b88b7d] ${greatVibes.className} leading-none mb-[2vw]`}>Logeshwaran R</h3>
+                  
+                  <div className="text-[0.85vw] text-[#333333] font-sans max-w-[85%] mx-auto leading-[1.6]">
+                     <p>student of <span className="font-bold">Anna University</span>, has successfully completed the <span className="font-bold">Full Stack Web Development</span></p>
+                     <p>internship program at LGS Technologies from 01 June 2026 to 01 July 2026.</p>
+                     <p>During this internship, the student demonstrated dedication, enthusiasm, and outstanding performance.</p>
+                     <p>We wish the student all the best for their future endeavors.</p>
+                  </div>
+                </div>
+
+                {/* Issue Date */}
+                <div className="absolute bottom-[13.5%] left-[12%] z-20 w-[15%] text-center pointer-events-none">
+                  <p className="text-[1vw] text-[#333333] italic">01/07/2026</p>
+                </div>
+
                 {/* Transparent Security Shielding Right Click & Drag */}
                 <div 
-                  className="absolute inset-0 z-10 cursor-default"
+                  className="absolute inset-0 z-30 cursor-default"
                   onContextMenu={(e) => e.preventDefault()}
                   onDragStart={(e) => e.preventDefault()}
                 ></div>

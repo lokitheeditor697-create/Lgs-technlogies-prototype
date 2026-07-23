@@ -1,5 +1,6 @@
 "use client";
 import { motion } from 'framer-motion';
+import { FiUsers, FiBriefcase, FiTrendingUp, FiMessageCircle, FiAward, FiMonitor, FiTarget, FiClock } from 'react-icons/fi';
 
 export default function Commitment() {
   return (
@@ -36,10 +37,10 @@ export default function Commitment() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
-            { value: '20K+', label: 'Students Trained', icon: '👤', color: 'text-blue-600 bg-blue-50 ring-blue-100' },
-            { value: '1K+', label: 'Hiring Partners', icon: '🤝', color: 'text-purple-600 bg-purple-50 ring-purple-100' },
-            { value: '95%', label: 'Satisfaction Rate', icon: '📈', color: 'text-emerald-600 bg-emerald-50 ring-emerald-100' },
-            { value: '24/7', label: 'Mentor Support', icon: '💬', color: 'text-amber-600 bg-amber-50 ring-amber-100' },
+            { value: '20K+', label: 'Students Trained', icon: <FiUsers className="w-8 h-8" />, color: 'text-blue-600 bg-blue-50 ring-blue-100' },
+            { value: '1K+', label: 'Hiring Partners', icon: <FiBriefcase className="w-8 h-8" />, color: 'text-purple-600 bg-purple-50 ring-purple-100' },
+            { value: '95%', label: 'Satisfaction Rate', icon: <FiTrendingUp className="w-8 h-8" />, color: 'text-emerald-600 bg-emerald-50 ring-emerald-100' },
+            { value: '24/7', label: 'Mentor Support', icon: <FiMessageCircle className="w-8 h-8" />, color: 'text-amber-600 bg-amber-50 ring-amber-100' },
           ].map((stat, i) => (
             <motion.div 
               key={i} 
@@ -60,10 +61,10 @@ export default function Commitment() {
         
         <div className="mt-24 pt-16 border-t border-gray-200 grid grid-cols-1 md:grid-cols-4 gap-8">
             {[
-                { title: 'Quick Certificate', desc: 'Get certified instantly', icon: '📜' },
-                { title: 'Live Projects', desc: 'Real-world experience', icon: '💻' },
-                { title: 'Career Support', desc: 'Placement assistance', icon: '🎯' },
-                { title: 'Flexible Schedule', desc: 'Learn at your pace', icon: '⏱️' },
+                { title: 'Quick Certificate', desc: 'Get certified instantly', icon: <FiAward className="w-6 h-6" /> },
+                { title: 'Live Projects', desc: 'Real-world experience', icon: <FiMonitor className="w-6 h-6" /> },
+                { title: 'Career Support', desc: 'Placement assistance', icon: <FiTarget className="w-6 h-6" /> },
+                { title: 'Flexible Schedule', desc: 'Learn at your pace', icon: <FiClock className="w-6 h-6" /> },
             ].map((feature, i) => (
                 <motion.div 
                   key={i} 

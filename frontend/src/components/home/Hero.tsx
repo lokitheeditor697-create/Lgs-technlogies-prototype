@@ -99,7 +99,7 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          {/* Right Column: IDE / Code Preview Card */}
+          {/* Right Column: Premium Dashboard Preview Card */}
           <div className="lg:col-span-5 relative">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -107,84 +107,97 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="relative mx-auto max-w-lg lg:max-w-none"
             >
-              {/* Outer IDE Card */}
-              <div className="bg-slate-900 backdrop-blur-xl border border-slate-800 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] overflow-hidden">
-                
-                {/* IDE Header Bar */}
-                <div className="px-4 py-3 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-red-500/80 inline-block"></span>
-                    <span className="w-3 h-3 rounded-full bg-yellow-500/80 inline-block"></span>
-                    <span className="w-3 h-3 rounded-full bg-green-500/80 inline-block"></span>
-                  </div>
-                  <div className="flex items-center gap-2 text-slate-400 text-xs font-mono">
-                    <FiTerminal className="w-3.5 h-3.5 text-blue-400" />
-                    <span>LGS_Portal.tsx</span>
-                  </div>
-                  <div className="w-10"></div>
-                </div>
+              {/* Glassmorphic Dashboard UI */}
+              <div className="bg-white/40 backdrop-blur-2xl border border-white/60 rounded-[32px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden p-6 sm:p-8 relative">
+                 <div className="absolute top-0 right-0 w-40 h-40 bg-blue-400/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-purple-400/10 rounded-full blur-3xl -ml-10 -mb-10"></div>
+                 
+                 {/* Header */}
+                 <div className="flex items-center justify-between mb-8 relative z-10">
+                   <div className="flex items-center gap-4">
+                     <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 p-[2px] shadow-sm">
+                       <div className="w-full h-full bg-white rounded-full flex items-center justify-center text-xl font-black text-transparent bg-clip-text bg-gradient-to-br from-blue-600 to-indigo-600">
+                         ST
+                       </div>
+                     </div>
+                     <div>
+                       <h3 className="font-extrabold text-gray-900 text-lg sm:text-xl">Student Dashboard</h3>
+                       <p className="text-sm text-gray-500 font-bold">Full Stack Web Development</p>
+                     </div>
+                   </div>
+                   <div className="px-4 py-1.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full shadow-sm">
+                     Active Track
+                   </div>
+                 </div>
 
-                {/* Code snippet content */}
-                <div className="p-5 font-mono text-xs sm:text-sm text-slate-300 leading-relaxed space-y-2 select-none bg-[#0D1335]">
-                  <p><span className="text-purple-400">import</span> &#123; <span className="text-blue-300">applyInternship</span>, <span className="text-blue-300">verifyCertificate</span> &#125; <span className="text-purple-400">from</span> <span className="text-emerald-300">&apos;@lgs/core&apos;</span>;</p>
-                  <br />
-                  <p className="text-slate-500">// 1. Select Internship & Submit Code</p>
-                  <p><span className="text-purple-400">const</span> <span className="text-yellow-300">intern</span> = <span className="text-purple-400">await</span> <span className="text-blue-400">applyInternship</span>(&#123;</p>
-                  <p className="pl-4"><span className="text-slate-400">domain</span>: <span className="text-emerald-300">&quot;Full Stack Development&quot;</span>,</p>
-                  <p className="pl-4"><span className="text-slate-400">duration</span>: <span className="text-emerald-300">&quot;4 Weeks&quot;</span>,</p>
-                  <p className="pl-4"><span className="text-slate-400">status</span>: <span className="text-emerald-300">&quot;ACTIVE&quot;</span></p>
-                  <p>&#125;);</p>
-                  <br />
-                  <p className="text-slate-500">// 2. Real-time Verified Output</p>
-                  <div className="mt-2 p-3 bg-slate-900 rounded-lg border border-slate-800 text-xs space-y-1 font-mono text-emerald-400">
-                    <p className="flex items-center gap-2">
-                      <FiCheckCircle className="text-emerald-400" />
-                      <span>Offer Letter Generated [LGS-OFFER-2026]</span>
-                    </p>
-                    <p className="flex items-center gap-2 text-blue-400">
-                      <FiAward className="text-blue-400" />
-                      <span>Digital Certificate Signed & Issued</span>
-                    </p>
-                  </div>
-                </div>
+                 {/* Progress Section */}
+                 <div className="bg-white/80 rounded-2xl p-6 mb-6 shadow-sm border border-white relative z-10">
+                   <div className="flex justify-between items-center mb-4">
+                     <span className="text-sm font-bold text-gray-700">Internship Progress</span>
+                     <span className="text-lg font-black text-blue-600">85%</span>
+                   </div>
+                   <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                     <motion.div 
+                       initial={{ width: 0 }} 
+                       animate={{ width: "85%" }} 
+                       transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
+                       className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full relative"
+                     >
+                       <div className="absolute inset-0 bg-white/20 w-full h-full animate-[shimmer_2s_infinite]"></div>
+                     </motion.div>
+                   </div>
+                 </div>
 
-                {/* Footer inside Card */}
-                <div className="px-5 py-3.5 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400 font-medium">
-                  <span className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span>Live Verification Engine</span>
-                  </span>
-                  <span className="text-blue-400 font-bold">LGS Verified</span>
-                </div>
+                 {/* Modules */}
+                 <div className="space-y-4 relative z-10">
+                    {[
+                      { icon: <FiCode />, title: 'Frontend Architecture', status: 'Completed', color: 'text-emerald-500', bg: 'bg-emerald-50 border-emerald-100' },
+                      { icon: <FiTerminal />, title: 'Backend Node APIs', status: 'In Progress', color: 'text-blue-500', bg: 'bg-blue-50 border-blue-100' },
+                      { icon: <FiShield />, title: 'Deployment & Security', status: 'Locked', color: 'text-gray-400', bg: 'bg-gray-50 border-gray-100' }
+                    ].map((mod, i) => (
+                      <div key={i} className="flex items-center justify-between p-4 bg-white/70 rounded-2xl border border-white hover:bg-white hover:shadow-apple-hover transition-all duration-300">
+                        <div className="flex items-center gap-4">
+                          <div className={`p-3 rounded-xl border ${mod.bg} ${mod.color}`}>
+                            {mod.icon}
+                          </div>
+                          <span className="font-bold text-gray-800 text-sm">{mod.title}</span>
+                        </div>
+                        <span className={`text-xs font-extrabold tracking-wide uppercase ${mod.status === 'Completed' ? 'text-emerald-600' : mod.status === 'In Progress' ? 'text-blue-600' : 'text-gray-400'}`}>
+                          {mod.status}
+                        </span>
+                      </div>
+                    ))}
+                 </div>
+
               </div>
 
               {/* Floating Badge: Verified Badge */}
               <motion.div 
-                animate={{ y: [0, -6, 0] }}
+                animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -bottom-5 -left-5 bg-white/95 backdrop-blur-xl border border-gray-200 p-3.5 rounded-xl shadow-xl flex items-center gap-3 text-gray-900 z-20"
+                className="absolute -bottom-6 -left-6 sm:-left-10 bg-white/95 backdrop-blur-xl border border-gray-200 p-4 rounded-2xl shadow-xl flex items-center gap-4 text-gray-900 z-20"
               >
-                <div className="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold">
-                  <FiCheckCircle className="w-5 h-5" />
+                <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold border-4 border-white shadow-sm">
+                  <FiCheckCircle className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">Instant Digital</p>
-                  <p className="text-xs sm:text-sm font-bold text-gray-900">QR Code Verified</p>
+                  <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Credential</p>
+                  <p className="text-sm font-extrabold text-gray-900">Verified Issuer</p>
                 </div>
               </motion.div>
 
               {/* Floating Badge: Counter */}
               <motion.div 
-                animate={{ y: [0, 6, 0] }}
+                animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute -top-5 -right-5 bg-white/95 backdrop-blur-xl border border-gray-200 p-3.5 rounded-xl shadow-xl flex items-center gap-3 text-gray-900 z-20"
+                className="absolute -top-6 -right-6 sm:-right-8 bg-white/95 backdrop-blur-xl border border-gray-200 p-4 rounded-2xl shadow-xl flex items-center gap-4 text-gray-900 z-20"
               >
-                <div className="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                  <FiCode className="w-4 h-4" />
+                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold border-4 border-white shadow-sm">
+                  <FiAward className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">Hands-on Projects</p>
-                  <p className="text-xs sm:text-sm font-bold text-blue-600">20,000+ Students</p>
+                  <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Network</p>
+                  <p className="text-sm font-extrabold text-blue-600">1K+ Hiring Partners</p>
                 </div>
               </motion.div>
             </motion.div>

@@ -102,7 +102,7 @@ export default function SampleCertificate() {
                 {/* Sample Certificate Data Overlay */}
                 <div className="absolute inset-0 z-10 pointer-events-none flex flex-col items-center pt-[15%] text-center">
                   <p className="text-[1vw] tracking-[0.2em] text-[#333333] font-sans font-medium mb-[2vw]">THIS IS TO CERTIFY THAT</p>
-                  <h3 className={`text-[4.5vw] text-[#b88b7d] ${greatVibes.className} leading-none mb-[2vw]`}>Logeshwaran R</h3>
+                  <h3 className={`text-[4.5vw] text-[#b88b7d] ${greatVibes.className} leading-none mb-[2vw]`}>Logeshwaran D</h3>
                   
                   <div className="text-[0.85vw] text-[#333333] font-sans max-w-[85%] mx-auto leading-[1.6]">
                      <p>student of <span className="font-bold">Anna University</span>, has successfully completed the <span className="font-bold">Full Stack Web Development</span></p>
